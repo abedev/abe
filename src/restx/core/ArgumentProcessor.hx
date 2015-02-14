@@ -16,8 +16,7 @@ class ArgumentProcessor<TArgs : {}> {
     this.filters.checkRequirements(requirements);
   }
 
-  public function processArguments(source : { params : {}, query : {}, body : {} }) : ArgumentProcessing<TArgs> {
-    var results : TArgs = cast {};
+  public function processArguments(source : { params : {}, query : {}, body : {} }, results : TArgs) : ArgumentProcessing<TArgs> {
     for(r in requirements) {
       switch getValue(r.name, source, r.sources) {
         case Some(v):

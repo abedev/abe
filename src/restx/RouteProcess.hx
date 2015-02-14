@@ -16,7 +16,7 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
   }
 
   public function run(req : Request, res : Response, next : Next) {
-    switch argumentProcessor.processArguments(req) {
+    switch argumentProcessor.processArguments(req, arguments) {
       case Ok(args):
         instance.request = req;
         instance.response = res;

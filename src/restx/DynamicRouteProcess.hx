@@ -14,6 +14,7 @@ class DynamicRouteProcess extends RouteProcess<IRoute, {}> {
   public function new(instance : IRoute, method : Function, argumentProcessor : ArgumentProcessor<{}>) {
     super(instance, argumentProcessor);
     this.method = method;
+    this.arguments = {};
   }
 
   override function execute() {
