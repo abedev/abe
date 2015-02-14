@@ -1,10 +1,14 @@
 package routes;
 
+import express.Next;
+import express.Request;
+import express.Response;
 import restx.IRoute;
 
 class Index implements IRoute {
-  public var request : Dynamic;
-  public var response : Dynamic;
+  public var request : Request;
+  public var response : Response;
+  public var next : Next;
   public function new() {}
 
   public function manual() {
