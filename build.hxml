@@ -5,4 +5,5 @@
 -cp extern
 -cp test
 -main TestAll
--js bin/server.js
+-js bin/test.js
+-cmd node bin/test.js

@@ -1,5 +1,5 @@
 package restx;
 
-class IRoute {
+interface IRoute {
 
 }
