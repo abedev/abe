@@ -3,10 +3,11 @@ package routes;
 import restx.IRoute;
 
 class Index implements IRoute {
+  public var request : Dynamic;
+  public var response : Dynamic;
   public function new() {}
 
-  @:path("/")
-  public function main() {
-    
+  public function manual() {
+    response.send("Hello World");
   }
 }

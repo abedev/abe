@@ -8,26 +8,35 @@ class TestAll {
   static var port = 8888;
   public static function main() {
     // run server
-    runServer();
+    runServer(function() {
+      var runner = new Runner();
+      // run static tests
+      runner.addCase(new TestAll());
 
-    // run static tests
-    var runner = new Runner();
-    runner.addCase(new TestAll());
-    runner.addCase(new TestCalls());
-/*    runner.onComplete.add(function(runner) {
-      trace("DONE!");
-      trace(runner);
-      js.Node.process.exit();
+      // run REST tests
+      runner.addCase(new TestCalls(port));
+
+      // report
+      Report.create(runner);
+      runner.run();
     });
-   */
-    Report.create(runner);
-    runner.run();
+
   }
 
-  static function runServer() {
-    var app = new App(port);
-    app.router.register("/", new routes.Index().main);
-    app.start();
+  static function runServer(callback : Void -> Void) {
+    var app = new App(port),
+        instance = new routes.Index();
+
+    // manual registration
+    app.router.register({
+      path : "/",
+      method : "GET",
+      instance : instance,
+      controller : instance.manual
+    });
+
+    // start server
+    app.start(callback);
   }
 
   public function new() {}
