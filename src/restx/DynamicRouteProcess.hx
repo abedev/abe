@@ -13,13 +13,11 @@ import js.Error;
 class DynamicRouteProcess extends RouteProcess<IRoute> {
   var instance : IRoute;
   var method : Function;
-  var requirements : Array<ArgumentRequirement>;
   var argumentProcessor : ArgumentProcessor;
   public function new(instance : IRoute, method : Function, argumentProcessor : ArgumentProcessor) {
     super();
     this.instance = instance;
     this.method = method;
-    this.requirements = null != requirements ? requirements : [];
     this.argumentProcessor = argumentProcessor;
   }
 
