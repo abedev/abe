@@ -34,13 +34,9 @@ class ArgumentProcessor<TArgs : {}> {
     }
 
     return Promise.all(promises).mapEither(
-      function(_) {
-        return Ok;
-      },
-      function(err) {
-        // TODO change String to Error
-        return InvalidFilter(err.toString());
-      });
+      function(_)   return Ok,
+      function(err) return InvalidFilter(err)
+    );
   }
 
   static function getValue(name : String, source : { params : {}, query : {}, body : {} }, sources : Array<Source>) {

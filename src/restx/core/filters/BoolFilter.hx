@@ -12,6 +12,6 @@ class BoolFilter implements IFilterArgument<Bool> {
     if(Bools.canParse(value))
       return Promise.value(Bools.parse(value));
     else
-      return Promise.error(new Error('"$value" is not an Booleger value'));
+      return Promise.error(new Error('"$value" is not a Boolean value'));
   }
 }

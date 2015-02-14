@@ -24,10 +24,11 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
           instance.next = next;
           execute();
         case Required(param):
-          (next : Error -> Void)(new Error('Parameter "$param" is required'));
-        case InvalidFilter(msg):
           // TODO add proper status code
-          (next : Error -> Void)(new Error(msg));
+          (next : Error -> Void)(new Error('Parameter "$param" is required'));
+        case InvalidFilter(err):
+          // TODO add proper status code
+          (next : Error -> Void)(err);
       }
     });
 
