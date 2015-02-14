@@ -1,13 +1,15 @@
-import js.node.http.Method;
 import utest.Assert;
-
+import restx.Router;
 import js.node.Http;
+import js.node.http.Method;
 import js.node.http.IncomingMessage;
 
 class TestCalls {
   var port : Int;
-  public function new(port : Int) {
+  var router : Router;
+  public function new(port : Int, router : Router) {
     this.port = port;
+    this.router = router;
   }
 
   public function testIndex() {

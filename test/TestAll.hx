@@ -1,4 +1,5 @@
 import js.node.http.Method;
+import routes.*;
 import utest.Assert;
 import utest.ui.Report;
 import utest.Runner;
@@ -9,13 +10,13 @@ class TestAll {
   static var port = 8888;
   public static function main() {
     // run server
-    runServer(function() {
+    runServer(function(router) {
       var runner = new Runner();
       // run static tests
       runner.addCase(new TestAll());
 
       // run REST tests
-      runner.addCase(new TestCalls(port));
+      runner.addCase(new TestCalls(port, router));
 
       // report
       Report.create(runner);
@@ -24,15 +25,15 @@ class TestAll {
 
   }
 
-  static function runServer(callback : Void -> Void) {
+  static function runServer(callback : Router -> Void) {
     var app = new App(port),
-        instance = new routes.Index();
+        instance = new Manual();
 
     // manual registration
     app.router.register("/manual/noarg", Get, new restx.DynamicRouteProcess(instance, instance.noArgs));
 
     // start server
-    app.start(callback);
+    app.start(function() callback(app.router));
   }
 
   public function new() {}
