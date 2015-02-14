@@ -1,3 +1,4 @@
+import js.node.http.Method;
 import utest.Assert;
 import utest.ui.Report;
 import utest.Runner;
@@ -28,12 +29,7 @@ class TestAll {
         instance = new routes.Index();
 
     // manual registration
-    app.router.register({
-      path : "/",
-      method : "GET",
-      instance : instance,
-      controller : instance.manual
-    });
+    app.router.register("/", Get, new restx.DynamicRouteProcess(instance, instance.manual));
 
     // start server
     app.start(callback);

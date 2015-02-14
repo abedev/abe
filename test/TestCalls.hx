@@ -1,3 +1,4 @@
+import js.node.http.Method;
 import utest.Assert;
 
 import js.node.Http;
@@ -10,7 +11,7 @@ class TestCalls {
   }
 
   public function testIndex() {
-    request("/", "GET", function(msg) {
+    request("/", Get, function(msg) {
       Assert.equals("Hello World", msg);
     });
   }

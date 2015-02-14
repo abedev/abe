@@ -1,6 +1,7 @@
 package restx;
 
 import haxe.Constraints.Function;
+import js.node.http.Method;
 using thx.core.Nulls;
 
 class Router {
@@ -9,26 +10,16 @@ class Router {
     this.server = server;
   }
 
-  public function register(info : RouteInfo) {
-    var method = info.method.or("GET").toLowerCase();
+  public function register(path : String, method : Method, process : RouteProcess) {
+    if(null == method)
+      method = Get;
+
     Reflect.callMethod(
       server,
-      Reflect.field(server, method), [
-        info.path,
-        function(req, res, next) {
-          info.instance.request = req;
-          info.instance.response = res;
-          info.controller();
-          next();
-        }
+      Reflect.field(server, (method : String).toLowerCase()), [
+        path,
+        process.run
       ]
     );
   }
-}
-
-typedef RouteInfo = {
-  path : String,
-  method : String,
-  instance : IRoute,
-  controller : Function
 }
