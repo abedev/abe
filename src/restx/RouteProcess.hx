@@ -23,7 +23,9 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
           instance.response = res;
           instance.next = next;
           execute();
-        case Required(msg), InvalidType(msg):
+        case Required(param):
+          (next : Error -> Void)(new Error('Parameter "$param" is required'));
+        case InvalidFilter(msg):
           // TODO add proper status code
           (next : Error -> Void)(new Error(msg));
       }

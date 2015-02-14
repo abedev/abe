@@ -39,7 +39,7 @@ class ArgumentProcessor<TArgs : {}> {
       },
       function(err) {
         // TODO change String to Error
-        return InvalidType(err.toString());
+        return InvalidFilter(err.toString());
       });
   }
 
