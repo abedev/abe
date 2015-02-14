@@ -10,12 +10,12 @@ import restx.core.ArgumentRequirement;
 import restx.core.ArgumentsFilter;
 import js.Error;
 
-class DynamicRouteProcess<T : Function> extends RouteProcess {
+class DynamicRouteProcess extends RouteProcess<IRoute> {
   var instance : IRoute;
   var method : Function;
   var requirements : Array<ArgumentRequirement>;
   var argumentProcessor : ArgumentProcessor;
-  public function new(instance : IRoute, method : T, argumentProcessor : ArgumentProcessor) {
+  public function new(instance : IRoute, method : Function, argumentProcessor : ArgumentProcessor) {
     super();
     this.instance = instance;
     this.method = method;
@@ -36,6 +36,6 @@ class DynamicRouteProcess<T : Function> extends RouteProcess {
     }
   }
 
-  function processArguments(req : Request) : ArgumentProcessing
+  function processArguments(req : Request) : ArgumentProcessing<{}>
     return argumentProcessor.processArguments(req);
 }

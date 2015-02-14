@@ -1,6 +1,6 @@
 package restx.core;
 
-enum ArgumentProcessing {
+enum ArgumentProcessing<T : {}> {
   Ok(args : Array<Dynamic>);
   InvalidType(msg : String);
   Required(msg : String);
