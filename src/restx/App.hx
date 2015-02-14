@@ -6,6 +6,9 @@ class App {
   public function new(port : Int) {
     this.port = port;
     this.router = new Router();
+    this.server = Restify.createServer({
+      name : "RESTX"
+    });
   }
 
   public function start() { }
