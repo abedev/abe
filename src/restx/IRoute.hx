@@ -1,0 +1,5 @@
+package restx;
+
+class IRoute {
+
+}

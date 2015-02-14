@@ -1,2 +1,2 @@
 # restx
-REST API helper for Haxe and Node
+Build REST apis with Haxe and norejs.

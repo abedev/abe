@@ -1,0 +1,8 @@
+-lib thx.core
+-lib hxnodejs
+-lib utest
+-cp src
+-cp extern
+-cp test
+-main TestAll
+-js bin/server.js
