@@ -1,5 +1,4 @@
 import js.node.http.Method;
-import routes.*;
 import utest.Assert;
 import utest.ui.Report;
 import utest.Runner;
@@ -26,12 +25,7 @@ class TestAll {
   }
 
   static function runServer(callback : Router -> Void) {
-    var app = new App(port),
-        instance = new Manual();
-
-    // manual registration
-    app.router.register("/manual/noarg", Get, new restx.DynamicRouteProcess(instance, instance.noArgs));
-
+    var app = new App(port);
     // start server
     app.start(function() callback(app.router));
   }
