@@ -5,6 +5,8 @@ import restx.core.ArgumentRequirement;
 import restx.core.ArgumentsFilter;
 using thx.core.Either;
 using thx.core.Types;
+using thx.promise.Future;
+using thx.promise.Promise;
 using haxe.ds.Option;
 
 class ArgumentProcessor<TArgs : {}> {
@@ -16,25 +18,29 @@ class ArgumentProcessor<TArgs : {}> {
     this.filters.checkRequirements(requirements);
   }
 
-  public function processArguments(source : { params : {}, query : {}, body : {} }, results : TArgs) : ArgumentProcessing {
+  public function processArguments(source : { params : {}, query : {}, body : {} }, results : TArgs) : Future<ArgumentProcessing> {
+    var promises = [];
     for(r in requirements) {
       switch getValue(r.name, source, r.sources) {
         case Some(v):
-          switch filters.getFilterType(r.type).filter(v) {
-            case Right(value):
-              Reflect.setField(results, r.name, value);
-            case Left(error):
-              return InvalidType('invalid type for param ${r.name}');
-          }
+          var future = filters.getFilterType(r.type).filter(v);
+          promises.push(future.success(
+            function(value) Reflect.setField(results, r.name, value)));
+        case None if(r.optional):
+          Reflect.setField(results, r.name, null);
         case None:
-          if(r.optional) {
-            Reflect.setField(results, r.name, null);
-          } else {
-            return Required('param ${r.name} is required');
-          }
+          return Future.value(Required(r.name));
       }
     }
-    return Ok;
+
+    return Promise.all(promises).mapEither(
+      function(_) {
+        return Ok;
+      },
+      function(err) {
+        // TODO change String to Error
+        return InvalidType(err.toString());
+      });
   }
 
   static function getValue(name : String, source : { params : {}, query : {}, body : {} }, sources : Array<Source>) {

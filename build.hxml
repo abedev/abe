@@ -1,4 +1,5 @@
 -lib thx.core
+-lib thx.promise
 -lib hxnodejs
 -lib utest
 -cp src

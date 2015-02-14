@@ -1,17 +1,17 @@
 package restx.core.filters;
 
-import thx.core.Either;
 import thx.core.Ints;
-import thx.core.Result;
+import thx.core.Error;
+import thx.promise.Promise;
 
 class IntFilter implements IFilterArgument<Int> {
   public function new(){}
 
   public var type = "Int";
-  public function filter(value : String) : Result<Int, String> {
+  public function filter(value : String) : Promise<Int> {
     if(Ints.canParse(value))
-      return Either.Right(Ints.parse(value));
+      return Promise.value(Ints.parse(value));
     else
-      return Either.Left('"$value" is not an Integer value');
+      return Promise.error(new Error('"$value" is not an Integer value'));
   }
 }

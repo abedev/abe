@@ -16,16 +16,19 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
   }
 
   public function run(req : Request, res : Response, next : Next) {
-    switch argumentProcessor.processArguments(req, arguments) {
-      case Ok:
-        instance.request = req;
-        instance.response = res;
-        instance.next = next;
-        execute();
-      case Required(msg), InvalidType(msg):
-        // TODO add proper status code
-        (next : Error -> Void)(new Error(msg));
-    }
+    argumentProcessor.processArguments(req, arguments).then(function(result) {
+      switch result {
+        case Ok:
+          instance.request = req;
+          instance.response = res;
+          instance.next = next;
+          execute();
+        case Required(msg), InvalidType(msg):
+          // TODO add proper status code
+          (next : Error -> Void)(new Error(msg));
+      }
+    });
+
   }
 
   function execute()

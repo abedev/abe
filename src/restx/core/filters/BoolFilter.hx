@@ -1,17 +1,17 @@
 package restx.core.filters;
 
-import thx.core.Either;
 import thx.core.Bools;
-import thx.core.Result;
+import thx.core.Error;
+import thx.promise.Promise;
 
 class BoolFilter implements IFilterArgument<Bool> {
   public function new(){}
 
   public var type = "Bool";
-  public function filter(value : String) : Result<Bool, String> {
+  public function filter(value : String) : Promise<Bool> {
     if(Bools.canParse(value))
-      return Either.Right(Bools.parse(value));
+      return Promise.value(Bools.parse(value));
     else
-      return Either.Left('"$value" is not an Booleger value');
+      return Promise.error(new Error('"$value" is not an Booleger value'));
   }
 }
