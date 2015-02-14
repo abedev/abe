@@ -16,7 +16,7 @@ class ArgumentProcessor<TArgs : {}> {
     this.filters.checkRequirements(requirements);
   }
 
-  public function processArguments(source : { params : {}, query : {}, body : {} }, results : TArgs) : ArgumentProcessing<TArgs> {
+  public function processArguments(source : { params : {}, query : {}, body : {} }, results : TArgs) : ArgumentProcessing {
     for(r in requirements) {
       switch getValue(r.name, source, r.sources) {
         case Some(v):
@@ -34,7 +34,7 @@ class ArgumentProcessor<TArgs : {}> {
           }
       }
     }
-    return Ok(results);
+    return Ok;
   }
 
   static function getValue(name : String, source : { params : {}, query : {}, body : {} }, sources : Array<Source>) {

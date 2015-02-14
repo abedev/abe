@@ -17,11 +17,10 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
 
   public function run(req : Request, res : Response, next : Next) {
     switch argumentProcessor.processArguments(req, arguments) {
-      case Ok(args):
+      case Ok:
         instance.request = req;
         instance.response = res;
         instance.next = next;
-        arguments = args;
         execute();
       case Required(msg), InvalidType(msg):
         // TODO add proper status code
