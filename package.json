@@ -13,6 +13,6 @@
   "author": "Pellucid Analytics",
   "license": "ISC",
   "dependencies": {
-    "restify": "^2.8.5"
+    "express": "^4.11.2"
   }
 }

@@ -1,6 +1,6 @@
 package restx;
 
-import restify.Restify;
+import express.Express;
 
 class App {
   public var port(default, null) : Int;
@@ -9,15 +9,13 @@ class App {
   var server : Dynamic;
   public function new(port : Int) {
     this.port = port;
-    this.server = Restify.createServer({
-      name : "RESTX"
-    });
+    this.server = new Express({});
     this.router = new Router(server);
   }
 
   public function start(?callback : Void -> Void) {
     server.listen(port, function() {
-      trace('${server.name} listening on ${server.url}');
+      trace('${server.name} listening on ${port}');
       if(null != callback)
         callback();
     });

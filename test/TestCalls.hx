@@ -11,7 +11,7 @@ class TestCalls {
 
   public function testIndex() {
     request("/", "GET", function(msg) {
-      Assert.equals('"Hello World"', msg);
+      Assert.equals("Hello World", msg);
     });
   }
 
