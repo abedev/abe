@@ -7,7 +7,7 @@ using thx.core.Either;
 using thx.core.Types;
 using haxe.ds.Option;
 
-class ArgumentProcessor {
+class ArgumentProcessor<TArgs : {}> {
   var requirements : Array<ArgumentRequirement>;
   var filters : ArgumentsFilter;
   public function new(?filters : ArgumentsFilter, requirements : Array<ArgumentRequirement>) {
@@ -16,8 +16,8 @@ class ArgumentProcessor {
     this.filters.checkRequirements(requirements);
   }
 
-  public function processArguments(source : { params : {}, query : {}, body : {} }) {
-    var results = {};
+  public function processArguments(source : { params : {}, query : {}, body : {} }) : ArgumentProcessing<TArgs> {
+    var results : TArgs = cast {};
     for(r in requirements) {
       switch getValue(r.name, source, r.sources) {
         case Some(v):
