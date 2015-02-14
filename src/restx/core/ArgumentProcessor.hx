@@ -17,19 +17,19 @@ class ArgumentProcessor {
   }
 
   public function processArguments(source : { params : {}, query : {}, body : {} }) {
-    var results = [];
+    var results = {};
     for(r in requirements) {
       switch getValue(r.name, source, r.sources) {
         case Some(v):
           switch filters.getFilterType(r.type).filter(v) {
             case Right(value):
-              results.push(value);
+              Reflect.setField(results, r.name, value);
             case Left(error):
               return InvalidType('invalid type for param ${r.name}');
           }
         case None:
           if(r.optional) {
-            results.push(null);
+            Reflect.setField(results, r.name, null);
           } else {
             return Required('param ${r.name} is required');
           }

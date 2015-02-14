@@ -29,7 +29,10 @@ class DynamicRouteProcess extends RouteProcess<IRoute> {
         instance.request = req;
         instance.response = res;
         instance.next = next;
-        Reflect.callMethod(null, method, args);
+        var list = Reflect.fields(args);
+        Reflect.callMethod(null, method, list.map(function(arg) {
+          return Reflect.field(args, arg);
+        }));
       case Required(msg), InvalidType(msg):
         // TODO add proper status code
         (next : Error -> Void)(new Error(msg));
