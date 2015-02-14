@@ -19,11 +19,7 @@ class DynamicRouteProcess<T : Function> extends RouteProcess {
     super();
     this.instance = instance;
     this.method = method;
-    this.requirements = (null != requirements ? requirements : []).map(function(r) {
-        if(null == r.optional)
-          r.optional = false;
-        return r;
-      });
+    this.requirements = null != requirements ? requirements : [];
     this.argumentProcessor = argumentProcessor;
   }
 
