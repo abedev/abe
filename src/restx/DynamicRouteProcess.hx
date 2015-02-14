@@ -17,12 +17,12 @@ class DynamicRouteProcess extends RouteProcess<IRoute> {
   public function new(instance : IRoute, method : Function, argumentProcessor : ArgumentProcessor) {
     super();
     this.instance = instance;
-    this.method = method;
     this.argumentProcessor = argumentProcessor;
+    this.method = method;
   }
 
   override public function run(req : Request, res : Response, next : Next) {
-    switch processArguments(req) {
+    switch argumentProcessor.processArguments(req) {
       case Ok(args):
         instance.request = req;
         instance.response = res;
@@ -36,7 +36,4 @@ class DynamicRouteProcess extends RouteProcess<IRoute> {
         (next : Error -> Void)(new Error(msg));
     }
   }
-
-  function processArguments(req : Request) : ArgumentProcessing<{}>
-    return argumentProcessor.processArguments(req);
 }
