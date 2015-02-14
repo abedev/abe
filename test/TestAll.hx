@@ -29,7 +29,7 @@ class TestAll {
         instance = new routes.Index();
 
     // manual registration
-    app.router.register("/", Get, new restx.DynamicRouteProcess(instance, instance.manual));
+    app.router.register("/manual/noarg", Get, new restx.DynamicRouteProcess(instance, instance.noArgs));
 
     // start server
     app.start(callback);

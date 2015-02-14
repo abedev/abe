@@ -11,7 +11,8 @@ class TestCalls {
   }
 
   public function testIndex() {
-    request("/", Get, function(msg) {
+    var path = "/manual/noarg";
+    request(path, Get, function(msg) {
       Assert.equals("Hello World", msg);
     });
   }
