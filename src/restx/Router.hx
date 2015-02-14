@@ -10,7 +10,7 @@ class Router {
     this.server = server;
   }
 
-  public function register(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
+  public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
     if(null == method)
       method = Get;
 

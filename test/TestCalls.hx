@@ -20,7 +20,7 @@ class TestCalls {
     var path = "/manual/noarg",
         instance = new Manual();
 
-    router.register(path, Get,
+    router.registerMethod(path, Get,
       new DynamicRouteProcess(instance, instance.noArgs, new ArgumentProcessor([])));
 
     request(path, Get, function(msg) {
@@ -31,7 +31,7 @@ class TestCalls {
   public function testManualWithArguments() {
     var instance = new Manual();
 
-    router.register("/manual/withargs/:i/:b/:s", Get,
+    router.registerMethod("/manual/withargs/:i/:b/:s", Get,
       new DynamicRouteProcess(instance, instance.withArgs, new ArgumentProcessor([
               { name : "i", type : "Int", optional : false, sources : [Params] },
               { name : "b", type : "Bool", optional : false, sources : [Params] },
@@ -46,7 +46,7 @@ class TestCalls {
   public function testManualWithOptionalArgument() {
     var instance = new Manual();
 
-    router.register("/manual/optionalarg/:b/", Get,
+    router.registerMethod("/manual/optionalarg/:b/", Get,
       new DynamicRouteProcess(instance, instance.withOptionalArg, new ArgumentProcessor([
               { name : "i", type : "Int", optional : true, sources : [Query] },
               { name : "b", type : "Bool", optional : false, sources : [Params] }
