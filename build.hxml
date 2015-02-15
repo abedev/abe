@@ -8,3 +8,4 @@
 -main TestAll
 -js bin/test.js
 -cmd node bin/test.js
+#-dce no

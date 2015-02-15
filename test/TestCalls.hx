@@ -61,6 +61,10 @@ class TestCalls {
     });
   }
 
+  public function testAuto() {
+    router.register(new Auto());
+  }
+
   function request(path : String, method : String, callback : String -> Void) {
     var done = Assert.createAsync(2000);
     Http.request({
