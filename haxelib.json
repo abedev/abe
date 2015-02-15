@@ -1,0 +1,15 @@
+{
+  "name": "restx",
+  "url": "https://github.com/fponticelli/restx",
+  "license": "MIT",
+  "classPath": "src",
+  "tags": ["nodejs", "webserver", "rest"],
+  "description": "Easy webserver for Haxe and NodeJS built on top of Express",
+  "releasenote": "First release.",
+  "version": "0.0.1",
+  "contributors": ["fponticelli"],
+  "dependencies" : {
+    "thx.core" : "",
+    "hxnodejs" : ""
+  }
+}
