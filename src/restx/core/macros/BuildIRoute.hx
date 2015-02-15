@@ -4,6 +4,7 @@ import haxe.macro.Type;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import restx.core.macros.Macros.*;
+using thx.core.Arrays;
 
 class BuildIRoute {
   macro public static function complete() : Array<Field> {
@@ -13,6 +14,7 @@ class BuildIRoute {
     injectRequest(fields);
     injectResponse(fields);
     injectNext(fields);
+    makeControllerFunctionsPublic(fields);
     return fields;
   }
 
@@ -40,5 +42,12 @@ class BuildIRoute {
   static function injectNext(fields : Array<Field>) {
     if(hasField(fields, "next")) return;
     fields.push(createVarField("next", macro : express.Next));
+  }
+
+  static function makeControllerFunctionsPublic(fields : Array<Field>) {
+    for(field in fields) {
+      if(hasMeta(field.meta, ":path"))
+        makeFieldPublic(field);
+    }
   }
 }
