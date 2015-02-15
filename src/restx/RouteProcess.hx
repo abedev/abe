@@ -7,10 +7,10 @@ import js.Error;
 import restx.core.ArgumentProcessor;
 
 class RouteProcess<TRoute : IRoute, TArgs : {}> {
-  var instance : IRoute;
+  var instance : TRoute;
   var argumentProcessor : ArgumentProcessor<TArgs>;
   var arguments : TArgs;
-  public function new(instance : IRoute, argumentProcessor : ArgumentProcessor<TArgs>) {
+  public function new(instance : TRoute, argumentProcessor : ArgumentProcessor<TArgs>) {
     this.instance = instance;
     this.argumentProcessor = argumentProcessor;
   }
