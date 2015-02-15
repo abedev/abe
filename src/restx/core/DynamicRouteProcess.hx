@@ -1,4 +1,4 @@
-package restx;
+package restx.core;
 
 import haxe.Constraints.Function;
 import restx.core.ArgumentProcessor;

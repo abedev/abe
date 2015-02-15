@@ -53,4 +53,4 @@ TODO:
     * static cache
     * expose https://github.com/expressjs/express-expose
     * flash message https://github.com/expressjs/flash
-    * image optimizer https://github.com/msemenistyi/connect-image-optimus?_ga=1.71656337.300478207.1423933963
+    * image optimizer https://github.com/msemenistyi/connect-image-optimus

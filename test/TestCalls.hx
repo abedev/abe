@@ -1,4 +1,4 @@
-import restx.DynamicRouteProcess;
+import restx.core.DynamicRouteProcess;
 import utest.Assert;
 import routes.*;
 import restx.Router;
