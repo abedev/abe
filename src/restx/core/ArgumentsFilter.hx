@@ -1,10 +1,14 @@
 package restx.core;
 
+import restx.core.filters.*;
+
 class ArgumentsFilter {
   static var globalFilters : Array<IFilterArgument<Dynamic>> = [
-    new restx.core.filters.IntFilter(),
-    new restx.core.filters.BoolFilter(),
-    new restx.core.filters.StringFilter(),
+    new DateFilter(),
+    new IntFilter(),
+    new FloatFilter(),
+    new BoolFilter(),
+    new StringFilter(),
   ];
 
   public static function registerFilter(filter : IFilterArgument<Dynamic>)
