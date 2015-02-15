@@ -63,6 +63,10 @@ class TestCalls {
 
   public function testAuto() {
     router.register(new Auto());
+
+    request("/auto/", Get, function(msg) {
+      Assert.equals('DONE', msg);
+    });
   }
 
   function request(path : String, method : String, callback : String -> Void) {

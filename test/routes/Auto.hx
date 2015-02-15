@@ -2,11 +2,16 @@ package routes;
 
 import utest.Assert;
 
-import express.Next;
-import express.Request;
-import express.Response;
-import restx.IRoute;
+class Auto implements restx.IRoute {
+  @:path("/auto/")
+  function noParams() {
+    response.send("DONE");
+  }
 
-class Auto implements IRoute {
-
+  @:path("/auto/:name/:age")
+  function withParams(name : String, age : Int) {
+    Assert.is(name, String);
+    Assert.is(age, Int);
+    response.send({name:name,age:age});
+  }
 }
