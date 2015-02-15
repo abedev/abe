@@ -8,6 +8,7 @@ class Macros {
   public static function createVarField(name : String, type : ComplexType) : Field {
     return {
       name: name,
+      access: [APublic],
       kind: FVar(type, null),
       pos: Context.currentPos()
     };
