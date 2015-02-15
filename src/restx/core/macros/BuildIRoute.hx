@@ -4,7 +4,6 @@ import haxe.macro.Type;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import restx.core.macros.Macros.*;
-using thx.macro.MacroFields;
 
 class BuildIRoute {
   macro public static function complete() : Array<Field> {
