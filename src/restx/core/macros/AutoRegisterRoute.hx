@@ -3,9 +3,7 @@ package restx.core.macros;
 import haxe.macro.Type;
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import haxe.macro.ExprTools;
 using haxe.macro.TypeTools;
-using haxe.macro.ComplexTypeTools;
 import restx.core.macros.Macros.*;
 
 class AutoRegisterRoute {

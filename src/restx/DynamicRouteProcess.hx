@@ -1,13 +1,7 @@
 package restx;
 
-import express.Next;
-import express.Request;
-import express.Response;
 import haxe.Constraints.Function;
-import restx.core.ArgumentProcessing;
 import restx.core.ArgumentProcessor;
-import restx.core.ArgumentRequirement;
-import restx.core.ArgumentsFilter;
 
 class DynamicRouteProcess extends RouteProcess<IRoute, {}> {
   var method : Function;

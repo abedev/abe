@@ -1,13 +1,9 @@
 package restx.core;
 
+using haxe.ds.Option;
 import restx.core.ArgumentProcessing;
-import restx.core.ArgumentRequirement;
-import restx.core.ArgumentsFilter;
-using thx.core.Either;
-using thx.core.Types;
 using thx.promise.Future;
 using thx.promise.Promise;
-using haxe.ds.Option;
 
 class ArgumentProcessor<TArgs : {}> {
   var requirements : Array<ArgumentRequirement>;

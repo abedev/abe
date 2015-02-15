@@ -2,12 +2,7 @@ package routes;
 
 import utest.Assert;
 
-import express.Next;
-import express.Request;
-import express.Response;
-import restx.IRoute;
-
-class Manual implements IRoute {
+class Manual implements restx.IRoute {
   public function noArgs() {
     response.send("Hello World");
   }
@@ -25,24 +20,4 @@ class Manual implements IRoute {
     Assert.is(b, Bool);
     response.send({ i : i, b : b });
   }
-
-  /*
-    // passport
-    // server.render ?
-    // capture app error
-    // capture HttpErrors
-
-    @:all/@:get/@:post/@:put/@:options/@:head/@:delete
-    @:method(a,b,c)
-
-    @:path("/")
-
-    @:forward("string") // for forwarding to next("string")
-
-    @:version("1.1.3")
-
-    @:role()
-
-    function list(@:from(Query) page = 1)
-  */
 }

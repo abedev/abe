@@ -1,6 +1,5 @@
 package restx.core;
 
-import thx.core.Result;
 import thx.promise.Promise;
 
 interface IFilterArgument<T> {
