@@ -1,16 +1,16 @@
 {
-  "name": "cmsapi",
-  "version": "1.0.0",
-  "description": "Pellucid CMS API",
+  "name": "restx",
+  "version": "0.0.1",
+  "description": "Easy webserver for Haxe and NodeJS built on top of Express",
   "main": "bin/server.js",
   "scripts": {
     "test": "bin/test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git@github-pellucid:pellucidanalytics/cmsapi.git"
+    "url": "https://github.com/fponticelli/restx"
   },
-  "author": "Pellucid Analytics",
+  "author": "Franco Ponticelli <franco.ponticelli@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "express": "^4.11.2"
