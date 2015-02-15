@@ -118,7 +118,6 @@ class AutoRegisterRoute {
     return results;
   }
 
-  // TODO
   static function createProcessFields(name : String, args : Array<ArgumentRequirement>) {
     var arguments = args.map(function(arg) {
             return 'arguments.${arg.name}';
