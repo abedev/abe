@@ -74,8 +74,9 @@ class AutoRegisterRoute {
                 name : "RouteProcess",
                 params : [
                   TPType(TPath({
+                    sub : type.name,
                     pack : type.pack,
-                    name : type.name
+                    name : type.module.split(".").pop()
                   })),
                   TPType(TAnonymous(params))]
               }, [], false),
