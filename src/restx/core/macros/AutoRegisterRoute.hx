@@ -92,7 +92,7 @@ class AutoRegisterRoute {
     })($instance, $router);
   }
 
-  static function getClassType(expr : Expr) return switch Context.typeof(expr) {
+  static function getClassType(expr : Expr) return switch Context.follow(Context.typeof(expr)) {
     case TInst(t, _) if(classImplementsInterface(t.get(), "restx.IRoute")): t.get();
     case _: Context.error('expression in Router.register must be an instance of an IRoute', Context.currentPos());
   }
