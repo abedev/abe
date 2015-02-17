@@ -127,7 +127,6 @@ class AutoRegisterRoute {
   }
 
   static function getArguments(field : ClassField) : Array<ArgumentRequirement> {
-    var type = Context.follow(field.type);
     return switch Context.follow(field.type) {
       case TFun(args, _):
         args.map(function(arg) {
