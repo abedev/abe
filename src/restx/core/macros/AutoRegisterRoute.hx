@@ -14,9 +14,10 @@ class AutoRegisterRoute {
     // iterate on all the fields and filter the functions that have @:path
     var fields = filterControllerMethods(type.fields.get());
 
+    var methods = ["get", "post", "head", "options", "put", "delete", "trace", "connect"];
+
     var definitions = fields.map(function(field) {
-        var methods = [":get", ":post", ":put", ":delete"],
-            metas   = field.meta.get(),
+        var metas   = field.meta.get(),
             meta    = findMetaFromNames(metas, methods),
             method  = meta.name.substring(1),
             path    = getMetaAsString(meta, 0),
@@ -113,8 +114,9 @@ class AutoRegisterRoute {
     var results = [];
     for(field in fields) {
       for(meta in field.meta.get()) {
-        if(meta.name != ":get")
+        if (["get", "post", "head", "options", "put", "delete", "trace", "connect"].indexOf(meta.name.substring(1)) < 0) {
           continue;
+        }
         results.push(field);
         break;
       }

@@ -44,8 +44,9 @@ class BuildIRoute {
 
   static function makeControllerFunctionsPublic(fields : Array<Field>) {
     for(field in fields) {
-      if(hasMeta(field.meta, ":get"))
-        makeFieldPublic(field);
+      for (method in ["get", "post", "head", "options", "put", "delete", "trace", "connect"])
+        if(hasMeta(field.meta, ":" + method))
+          makeFieldPublic(field);
     }
   }
 }

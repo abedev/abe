@@ -67,7 +67,7 @@ class Macros {
 
   public static function findMetaFromNames(meta : Array<MetadataEntry>, whitelistedNames : Array<String>) {
     for (name in whitelistedNames) {
-      var meta = findMeta(meta, name);
+      var meta = findMeta(meta, ":" + name);
       if (meta != null) {
         return meta;
       }

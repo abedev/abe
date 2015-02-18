@@ -67,6 +67,10 @@ class TestCalls {
     request("/auto/", Get, function(msg) {
       Assert.equals('DONE', msg);
     });
+
+    request("/auto/", Post, function(msg) {
+      Assert.equals('POSTED', msg);
+    });
   }
 
   function request(path : String, method : String, callback : String -> Void) {

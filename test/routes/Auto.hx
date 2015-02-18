@@ -8,6 +8,12 @@ class Auto implements restx.IRoute {
     response.send("DONE");
   }
 
+  @:post("/auto/")
+  function noParamPost() {
+    trace("BODY is " + request.body);
+    response.send("POSTED");
+  }
+
   @:get("/auto/:name/:age")
   function withParams(name : String, age : Int) {
     Assert.is(name, String);
