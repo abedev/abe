@@ -15,14 +15,17 @@ class AutoRegisterRoute {
     var fields = filterControllerMethods(type.fields.get());
 
     var definitions = fields.map(function(field) {
-        var metas   = field.meta.get(),
-            meta    = findMeta(metas, ":path"),
+        var methods = [":get", ":post", ":put", ":delete"],
+            metas   = field.meta.get(),
+            meta    = findMetaFromNames(metas, methods),
+            method  = meta.name.substring(1),
             path    = getMetaAsString(meta, 0),
             args    = getArguments(field);
         return {
           name : field.name,
           path : path,
-          arguments : args
+          arguments : args,
+          method: method
         };
       });
 
@@ -56,7 +59,7 @@ class AutoRegisterRoute {
                   Context.currentPos()));
 
         var path = definition.path,
-            method = "get"; // TODO
+            method = definition.method;
         exprs.push(macro router.registerMethod($v{path}, $v{method}, cast process));
 
         var params = definition.arguments.map(function(arg) : Field return {
@@ -110,7 +113,7 @@ class AutoRegisterRoute {
     var results = [];
     for(field in fields) {
       for(meta in field.meta.get()) {
-        if(meta.name != ":path")
+        if(meta.name != ":get")
           continue;
         results.push(field);
         break;

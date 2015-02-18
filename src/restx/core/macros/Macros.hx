@@ -65,6 +65,16 @@ class Macros {
     return hasFieldInHirearchy(superClass.t.get(), name);
   }
 
+  public static function findMetaFromNames(meta : Array<MetadataEntry>, whitelistedNames : Array<String>) {
+    for (name in whitelistedNames) {
+      var meta = findMeta(meta, name);
+      if (meta != null) {
+        return meta;
+      }
+    }
+    return null;
+  }
+
   public static function findMeta(meta : Array<MetadataEntry>, name : String) {
     if(null == meta)
       return null;
@@ -78,7 +88,7 @@ class Macros {
     return findMeta(meta, name) != null;
 
   public static function getMetaAsString(meta : MetadataEntry, pos : Int) {
-    if(null == meta.params[pos])
+    if(null == meta || null == meta.params[pos])
       return null;
     return switch meta.params[pos].expr {
       case EConst(CString(s)): s;

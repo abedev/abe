@@ -44,7 +44,7 @@ class BuildIRoute {
 
   static function makeControllerFunctionsPublic(fields : Array<Field>) {
     for(field in fields) {
-      if(hasMeta(field.meta, ":path"))
+      if(hasMeta(field.meta, ":get"))
         makeFieldPublic(field);
     }
   }
