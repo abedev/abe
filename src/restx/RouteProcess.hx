@@ -10,9 +10,10 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
   var instance : TRoute;
   var argumentProcessor : ArgumentProcessor<TArgs>;
   var args : TArgs;
-  public function new(instance : TRoute, argumentProcessor : ArgumentProcessor<TArgs>) {
+  public function new(args : TArgs, instance : TRoute, argumentProcessor : ArgumentProcessor<TArgs>) {
     this.instance = instance;
     this.argumentProcessor = argumentProcessor;
+    this.args = args;
   }
 
   public function run(req : Request, res : Response, next : Next) {
