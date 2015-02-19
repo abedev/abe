@@ -45,17 +45,20 @@ class AutoRegisterRoute {
         exprs.push(Context.parse('var filters = new restx.core.ArgumentsFilter()',
                   Context.currentPos()));
         var args = definition.args.map(function(arg) {
-            var sources = arg.sources.map(function(s) return '"$s"').join(", ");
-            return '{
-              name     : "${arg.name}",
-              optional : ${arg.optional},
-              type     : "${arg.type}",
-              sources : [$sources]
-            }';
-          }).join(", ");
+                var sources = arg.sources.map(function(s) return '"$s"').join(", ");
+                return '{
+                  name     : "${arg.name}",
+                  optional : ${arg.optional},
+                  type     : "${arg.type}",
+                  sources : [$sources]
+                }';
+              }).join(", "),
+            emptyArgs = definition.args.map(function(arg) {
+                return '${arg.name} : null';
+              }).join(", ");
         exprs.push(Context.parse('var processor = new restx.core.ArgumentProcessor(filters, [${args}])',
                   Context.currentPos()));
-        exprs.push(Context.parse('var process = new $fullName(instance, processor)',
+        exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)',
                   Context.currentPos()));
 
         var path = definition.path,
@@ -140,7 +143,7 @@ class AutoRegisterRoute {
               name : arg.name,
               optional : arg.opt,
               type : arg.t.toString(),
-              sources : ["get"]
+              sources : ["params"]
           };
         });
       case _: [];

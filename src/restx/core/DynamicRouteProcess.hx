@@ -6,9 +6,8 @@ import restx.core.ArgumentProcessor;
 class DynamicRouteProcess extends RouteProcess<IRoute, {}> {
   var method : Function;
   public function new(instance : IRoute, method : Function, argumentProcessor : ArgumentProcessor<{}>) {
-    super(instance, argumentProcessor);
+    super({}, instance, argumentProcessor);
     this.method = method;
-    this.args = {};
   }
 
   override function execute() {
