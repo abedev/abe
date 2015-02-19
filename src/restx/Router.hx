@@ -1,10 +1,10 @@
 package restx;
+import restx.Method;
 
 #if macro
 import haxe.macro.Expr;
 #else
 import haxe.Constraints.Function;
-import js.node.http.Method;
 #end
 
 class Router {

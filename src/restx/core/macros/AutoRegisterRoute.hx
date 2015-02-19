@@ -5,6 +5,7 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 using haxe.macro.TypeTools;
 import restx.core.macros.Macros.*;
+using thx.core.Iterables;
 
 class AutoRegisterRoute {
   public static function register(router : Expr, instance : Expr) : Expr {
@@ -14,11 +15,9 @@ class AutoRegisterRoute {
     // iterate on all the fields and filter the functions that have @:path
     var fields = filterControllerMethods(type.fields.get());
 
-    var methods = ["get", "post", "head", "options", "put", "delete", "trace", "connect"];
-
     var definitions = fields.map(function(field) {
         var metas   = field.meta.get(),
-            meta    = findMetaFromNames(metas, methods),
+            meta    = findMetaFromNames(metas, restx.Methods.list),
             method  = meta.name.substring(1),
             path    = getMetaAsString(meta, 0),
             args    = getArguments(field);
@@ -114,7 +113,8 @@ class AutoRegisterRoute {
     var results = [];
     for(field in fields) {
       for(meta in field.meta.get()) {
-        if (["get", "post", "head", "options", "put", "delete", "trace", "connect"].indexOf(meta.name.substring(1)) < 0) {
+        var find = meta.name.substring(1);
+        if (!restx.Methods.list.any(function (method) return method == find)) {
           continue;
         }
         results.push(field);
