@@ -3,12 +3,18 @@ package routes;
 import utest.Assert;
 
 class Auto implements restx.IRoute {
-  @:path("/auto/")
+  @:get("/auto/")
   function noParams() {
     response.send("DONE");
   }
 
-  @:path("/auto/:name/:age")
+  @:post("/auto/")
+  function noParamPost() {
+    trace("BODY is " + request.body);
+    response.send("POSTED");
+  }
+
+  @:get("/auto/:name/:age")
   function withParams(name : String, age : Int) {
     Assert.is(name, String);
     Assert.is(age, Int);

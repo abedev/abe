@@ -44,8 +44,9 @@ class BuildIRoute {
 
   static function makeControllerFunctionsPublic(fields : Array<Field>) {
     for(field in fields) {
-      if(hasMeta(field.meta, ":path"))
-        makeFieldPublic(field);
+      for (method in restx.Methods.list)
+        if(hasMeta(field.meta, ":" + method))
+          makeFieldPublic(field);
     }
   }
 }
