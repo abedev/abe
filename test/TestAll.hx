@@ -1,4 +1,3 @@
-import js.node.http.Method;
 import utest.Assert;
 import utest.ui.Report;
 import utest.Runner;
