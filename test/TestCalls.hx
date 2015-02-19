@@ -5,8 +5,9 @@ import restx.Router;
 import restx.core.Source;
 import restx.core.ArgumentProcessor;
 import js.node.Http;
+import js.node.http.*;
 import js.node.http.Method;
-import js.node.http.IncomingMessage;
+import js.node.Querystring;
 
 class TestCalls {
   var port : Int;
@@ -68,14 +69,14 @@ class TestCalls {
       Assert.equals('DONE', msg);
     });
 
-    request("/auto/", Post, function(msg) {
+    request("/auto/", Post, {foo: 'bar'}, function(msg : String) {
       Assert.equals('POSTED', msg);
     });
   }
 
-  function request(path : String, method : String, callback : String -> Void) {
+  function request(path : String, method : Method, ?payload : {}, callback : String -> Void) {
     var done = Assert.createAsync(2000);
-    Http.request({
+    var r = Http.request({
         host : "localhost",
         port : port,
         method : method,
@@ -89,6 +90,14 @@ class TestCalls {
           callback(data);
           done();
         });
-      }).end();
+      });
+
+    if (null != payload) {
+      var b = Querystring.stringify(payload);
+      r.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+      r.setHeader('Content-Length', '${b.length}');
+      r.write(b);
+    }
+    r.end();
   }
 }
