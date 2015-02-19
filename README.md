@@ -1,4 +1,6 @@
 # restx
+
+[![Join the chat at https://gitter.im/fponticelli/restx](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fponticelli/restx?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Build REST apis with Haxe and nodejs.
 
 WARNING: this is an experimental project and might be dropped at any time.
