@@ -19,4 +19,9 @@ class Auto implements restx.IRoute {
     Assert.is(age, Int);
     response.send({name:name,age:age});
   }
+
+  @:all("/handle/everything")
+  function handleEverything() {
+    response.send(request.method);
+  }
 }
