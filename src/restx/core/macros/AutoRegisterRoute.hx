@@ -24,7 +24,7 @@ class AutoRegisterRoute {
         return {
           name : field.name,
           path : path,
-          arguments : args,
+          args : args,
           method: method
         };
       });
@@ -39,12 +39,12 @@ class AutoRegisterRoute {
         // create a class type for each controller function
         var processName = [type.name, definition.name, "RouteProcess"].join("_"),
             fullName = type.pack.concat([processName]).join("."),
-            fields = createProcessFields(definition.name, definition.arguments),
+            fields = createProcessFields(definition.name, definition.args),
             exprs  = [];
 
         exprs.push(Context.parse('var filters = new restx.core.ArgumentsFilter()',
                   Context.currentPos()));
-        var args = definition.arguments.map(function(arg) {
+        var args = definition.args.map(function(arg) {
             var sources = arg.sources.map(function(s) return '"$s"').join(", ");
             return '{
               name     : "${arg.name}",
@@ -62,7 +62,7 @@ class AutoRegisterRoute {
             method = definition.method;
         exprs.push(macro router.registerMethod($v{path}, $v{method}, cast process));
 
-        var params = definition.arguments.map(function(arg) : Field return {
+        var params = definition.args.map(function(arg) : Field return {
               pos : Context.currentPos(),
               name : arg.name,
               kind : FVar(Context.follow(Context.getType(arg.type)).toComplexType())
@@ -125,10 +125,10 @@ class AutoRegisterRoute {
   }
 
   static function createProcessFields(name : String, args : Array<ArgumentRequirement>) {
-    var arguments = args.map(function(arg) {
-            return 'arguments.${arg.name}';
+    var args = args.map(function(arg) {
+            return 'args.${arg.name}';
           }).join(", "),
-        execute = 'instance.$name($arguments)';
+        execute = 'instance.$name($args)';
     return [createFunctionField("execute", [AOverride], Context.parse(execute, Context.currentPos()))];
   }
 
