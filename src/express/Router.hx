@@ -1,15 +1,18 @@
 package express;
 
-@:jsRequire("express")
-extern class Express {
-  @:selfCall function new(?options : Dynamic) : Void;
-
-  var locals(default, null) : Dynamic;
-  var mountpath(default, null) : Array<String>;
+@:jsRequire("express", "Router")
+extern class Router {
+  @:selfCall function new(?options : RouterOptions) : Void;
 
   // TODO: complete
-  @:overload(function(?path : String, router : Router) : Express {})
+  @:overload(function(path : String, router : Router) : Express {})
   function use(?path : String, middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware) : Express;
 
   function listen(port : Int, ?hostname : String, ?backlog : Int, ?callback : Void -> Void) : Void;
+}
+
+typedef RouterOptions = {
+  ?caseSensitive : Bool,
+  ?mergeParams : Bool,
+  ?strict : Bool
 }

@@ -9,10 +9,9 @@ using thx.core.Iterables;
 
 class AutoRegisterRoute {
   public static function register(router : Expr, instance : Expr) : Expr {
-    // get the type
     var type = getClassType(instance);
 
-    // iterate on all the fields and filter the functions that have @:path
+    // iterate on all the fields and filter the functions that have @:{method}
     var fields = filterControllerMethods(type.fields.get());
 
     var definitions = fields.map(function(field) {
@@ -34,43 +33,42 @@ class AutoRegisterRoute {
     }
 
     var exprs = definitions.map(function(definition) {
-        // for each iterate on all the HTTP methods (at least Get)
+      // create a class type for each controller function
+      var processName = [type.name, definition.name, "RouteProcess"].join("_");
+      var fullName = type.pack.concat([processName]).join("."),
+          exprs  = [];
 
-        // create a class type for each controller function
-        var processName = [type.name, definition.name, "RouteProcess"].join("_"),
-            fullName = type.pack.concat([processName]).join("."),
-            fields = createProcessFields(definition.name, definition.args),
-            exprs  = [];
+      exprs.push(Context.parse('var filters = new restx.core.ArgumentsFilter()',
+                Context.currentPos()));
+      var args = definition.args.map(function(arg) {
+              var sources = arg.sources.map(function(s) return '"$s"').join(", ");
+              return '{
+                name     : "${arg.name}",
+                optional : ${arg.optional},
+                type     : "${arg.type}",
+                sources : [$sources]
+              }';
+            }).join(", "),
+          emptyArgs = definition.args.map(function(arg) {
+              return '${arg.name} : null';
+            }).join(", ");
+      exprs.push(Context.parse('var processor = new restx.core.ArgumentProcessor(filters, [${args}])',
+                Context.currentPos()));
+      exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)',
+                Context.currentPos()));
 
-        exprs.push(Context.parse('var filters = new restx.core.ArgumentsFilter()',
-                  Context.currentPos()));
-        var args = definition.args.map(function(arg) {
-                var sources = arg.sources.map(function(s) return '"$s"').join(", ");
-                return '{
-                  name     : "${arg.name}",
-                  optional : ${arg.optional},
-                  type     : "${arg.type}",
-                  sources : [$sources]
-                }';
-              }).join(", "),
-            emptyArgs = definition.args.map(function(arg) {
-                return '${arg.name} : null';
-              }).join(", ");
-        exprs.push(Context.parse('var processor = new restx.core.ArgumentProcessor(filters, [${args}])',
-                  Context.currentPos()));
-        exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)',
-                  Context.currentPos()));
+      var path = definition.path,
+          method = definition.method;
+      exprs.push(macro router.registerMethod($v{path}, $v{method}, cast process));
 
-        var path = definition.path,
-            method = definition.method;
-        exprs.push(macro router.registerMethod($v{path}, $v{method}, cast process));
+      var params = definition.args.map(function(arg) : Field return {
+            pos : Context.currentPos(),
+            name : arg.name,
+            kind : FVar(Context.follow(Context.getType(arg.type)).toComplexType())
+          });
 
-        var params = definition.args.map(function(arg) : Field return {
-              pos : Context.currentPos(),
-              name : arg.name,
-              kind : FVar(Context.follow(Context.getType(arg.type)).toComplexType())
-            });
-
+      if(null == Context.getType(processName)) {
+        var fields = createProcessFields(definition.name, definition.args);
         Context.defineType({
             pos  : Context.currentPos(),
             pack : type.pack,
@@ -88,10 +86,11 @@ class AutoRegisterRoute {
               }, [], false),
             fields : fields,
           });
+      }
 
-        // pass additional filters
-        return macro $b{exprs};
-      });
+      // pass additional filters
+      return macro $b{exprs};
+    });
 
     // registerMethod(path, method, router)
     return macro (function(instance, router) {
