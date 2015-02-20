@@ -1,8 +1,5 @@
-import utest.Assert;
 import utest.ui.Report;
 import utest.Runner;
-
-import restx.*;
 
 class TestAll {
   static var port = 8888;
@@ -12,7 +9,8 @@ class TestAll {
     runner.addCase(new TestAll());
 
     // run REST tests
-    runner.addCase(new TestCalls());
+    runner.addCase(new TestManual());
+    runner.addCase(new TestAuto());
 
     // report
     Report.create(runner);
