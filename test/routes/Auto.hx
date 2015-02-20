@@ -10,7 +10,6 @@ class Auto implements restx.IRoute {
 
   @:post("/auto/")
   function noParamPost() {
-    trace("BODY is " + request.body);
     response.send("POSTED");
   }
 

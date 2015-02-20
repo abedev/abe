@@ -16,6 +16,12 @@ class Router {
     this.router = router;
   }
 
+  public function mount(path : String) {
+    var newrouter = new R();
+    router.use(path, newrouter);
+    return new Router(newrouter);
+  }
+
   public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
     if(null == method)
       method = Get;

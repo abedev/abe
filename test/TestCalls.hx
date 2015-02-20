@@ -74,6 +74,15 @@ class TestCalls {
     });
   }
 
+  public function testMount() {
+    var sub = router.mount("/sub/");
+    sub.register(new Auto());
+
+    request("/sub/auto/", Get, function(msg) {
+      Assert.equals('DONE', msg);
+    });
+  }
+
   function request(path : String, method : Method, ?payload : {}, callback : String -> Void) {
     var done = Assert.createAsync(2000);
     var r = Http.request({
