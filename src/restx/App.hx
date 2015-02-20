@@ -10,8 +10,10 @@ class App {
 
   var server : Express;
   public function new() {
-    this.server = new Express({});
-    this.router = new Router(server);
+    server = new Express({});
+    var r  = new express.Router();
+    server.use("/", r);
+    router = new Router(r);
   }
 
   public function http(port : Int, ?host : String, ?backlog : Int, ?callback : Void -> Void) {

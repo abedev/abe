@@ -5,14 +5,15 @@ import restx.Method;
 import haxe.macro.Expr;
 #else
 import express.Express;
+import express.Router in R;
 import haxe.Constraints.Function;
 #end
 
 class Router {
 #if !macro
-  var server : Express;
-  public function new(server : Express) {
-    this.server = server;
+  var router : R;
+  public function new(router : R) {
+    this.router = router;
   }
 
   public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
@@ -20,8 +21,8 @@ class Router {
       method = Get;
 
     Reflect.callMethod(
-      server,
-      Reflect.field(server, (method : String).toLowerCase()), [
+      router,
+      Reflect.field(router, (method : String).toLowerCase()), [
         path,
         process.run
       ]

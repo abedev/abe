@@ -8,7 +8,7 @@ extern class Express {
   var mountpath(default, null) : Array<String>;
 
   // TODO: complete
-  @:overload(function(subApp : Express) : Express {})
+  @:overload(function(?path : String, router : Router) : Express {})
   function use(?path : String, middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware) : Express;
 
   function listen(port : Int, ?hostname : String, ?backlog : Int, ?callback : Void -> Void) : Void;
