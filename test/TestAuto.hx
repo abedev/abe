@@ -32,6 +32,20 @@ class TestAuto extends TestCalls {
     request("/handle/everything/", Delete, function(msg : String) {
       Assert.equals(Delete, msg);
     });
+
+    // attaching multiple meta methods to the same handler should cause that
+    // handler to run for multiple paths or methods
+    request("/multi/meta/foo", Get, function(msg : String) {
+      Assert.equals("HANDLE MULTIPLE", msg);
+    });
+
+    request("/multi/meta/bar", Get, function(msg : String) {
+      Assert.equals("HANDLE MULTIPLE", msg);
+    });
+
+    request("/multi/meta/baz", Post, function(msg : String) {
+      Assert.equals("HANDLE MULTIPLE", msg);
+    });
   }
 
   public function testMount() {
