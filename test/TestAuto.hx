@@ -1,5 +1,6 @@
 import utest.Assert;
 import routes.*;
+import js.node.http.Method;
 
 class TestAuto extends TestCalls {
   public function testAuto() {
@@ -17,6 +18,8 @@ class TestAuto extends TestCalls {
   // test things like the @:all route, which handles all HTTP verbs, as well as
   // setting up multiple route metadata for a single handler function
   public function testMultiRouteHandler() {
+    router.register(new Auto());
+
     // make sure the @:all route can handle a variety of http methods
     request("/handle/everything/", Get, function(msg : String) {
       Assert.equals(Get, msg);
@@ -28,6 +31,7 @@ class TestAuto extends TestCalls {
 
     request("/handle/everything/", Delete, function(msg : String) {
       Assert.equals(Delete, msg);
+    });
   }
 
   public function testMount() {
