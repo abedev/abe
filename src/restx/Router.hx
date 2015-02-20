@@ -23,9 +23,6 @@ class Router {
     return new Router(newrouter);
   }
 
-  public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
-    if(null == method)
-      method = Get;
   public function use(?path : String, middleware : Middleware) {
     if(null == path)
       router.use(middleware);
@@ -33,9 +30,10 @@ class Router {
       router.use(path, middleware);
   }
 
+  public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
     Reflect.callMethod(
       router,
-      Reflect.field(router, (method : String).toLowerCase()), [
+      Reflect.field(router, method), [
         path,
         process.run
       ]
