@@ -24,9 +24,9 @@ class TestAll {
   }
 
   static function runServer(callback : Router -> Void) {
-    var app = new App(port);
+    var app = new App();
     // start server
-    app.start(function() callback(app.router));
+    app.http(port, function() callback(app.router));
   }
 
   public function new() {}

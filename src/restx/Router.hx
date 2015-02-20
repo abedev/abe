@@ -14,6 +14,7 @@ class Router {
   public function new(server : Express) {
     this.server = server;
   }
+
   public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
     if(null == method)
       method = Get;
