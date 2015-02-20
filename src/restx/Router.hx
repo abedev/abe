@@ -5,6 +5,7 @@ import restx.Method;
 import haxe.macro.Expr;
 #else
 import express.Express;
+import express.Middleware;
 import express.Router in R;
 import haxe.Constraints.Function;
 #end
@@ -25,6 +26,12 @@ class Router {
   public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
     if(null == method)
       method = Get;
+  public function use(?path : String, middleware : Middleware) {
+    if(null == path)
+      router.use(middleware);
+    else
+      router.use(path, middleware);
+  }
 
     Reflect.callMethod(
       router,
