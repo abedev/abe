@@ -7,28 +7,17 @@ import restx.*;
 class TestAll {
   static var port = 8888;
   public static function main() {
-    // run server
-    runServer(function(router) {
-      var runner = new Runner();
-      // run static tests
-      runner.addCase(new TestAll());
+    var runner = new Runner();
+    // run static tests
+    runner.addCase(new TestAll());
 
-      // run REST tests
-      runner.addCase(new TestCalls(port, router));
+    // run REST tests
+    runner.addCase(new TestCalls());
 
-      // report
-      Report.create(runner);
-      runner.run();
-    });
-
-  }
-
-  static function runServer(callback : Router -> Void) {
-    var app = new App();
-    // start server
-    app.http(port, function() callback(app.router));
+    // report
+    Report.create(runner);
+    runner.run();
   }
 
   public function new() {}
-
 }

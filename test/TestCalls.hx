@@ -1,6 +1,7 @@
 import restx.core.DynamicRouteProcess;
 import utest.Assert;
 import routes.*;
+import restx.App;
 import restx.Router;
 import restx.core.Source;
 import restx.core.ArgumentProcessor;
@@ -10,11 +11,20 @@ import js.node.http.Method;
 import js.node.Querystring;
 
 class TestCalls {
-  var port : Int;
+  static var port = 8888;
+  public function new() {}
+
+  var app : App;
   var router : Router;
-  public function new(port : Int, router : Router) {
-    this.port = port;
-    this.router = router;
+  var server : js.node.http.Server;
+  public function setup() {
+    app = new App();
+    router = app.router;
+    server = app.http(port);
+  }
+
+  public function teardown() {
+    server.close();
   }
 
   public function testManual() {
