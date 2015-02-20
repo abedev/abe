@@ -1,5 +1,6 @@
 package restx;
 
+import express.Middleware;
 import js.node.Http;
 import js.node.Https;
 import js.node.Tls.TlsServerOptions;
@@ -16,10 +17,12 @@ class App {
     router = new Router(r);
   }
 
+  public function use(middleware : Middleware)
+    server.use(middleware);
+
   public function http(port : Int, ?host : String, ?backlog : Int, ?callback : Void -> Void) {
     var server = Http.createServer(cast server);
     server.listen(port, host, backlog, function() {
-        trace('HTTP listening on ${port}');
         if(null != callback)
           callback();
       });
@@ -29,7 +32,6 @@ class App {
   public function https(port : Int, options : TlsServerOptions, ?host : String, ?backlog : Int, ?callback : Void -> Void) {
     var server = Https.createServer(options, cast server);
     server.listen(port, host, backlog, function() {
-        trace('HTTPS listening on ${port}');
         if(null != callback)
           callback();
       });
