@@ -6,7 +6,7 @@ class App {
   public var port(default, null) : Int;
   public var router(default, null) : Router;
 
-  var server : Dynamic;
+  var server : Express;
   public function new(port : Int) {
     this.port = port;
     this.server = new Express({});
@@ -15,7 +15,7 @@ class App {
 
   public function start(?callback : Void -> Void) {
     server.listen(port, function() {
-      trace('${server.name} listening on ${port}');
+      trace('listening on ${port}');
       if(null != callback)
         callback();
     });

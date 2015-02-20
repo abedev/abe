@@ -4,15 +4,16 @@ import restx.Method;
 #if macro
 import haxe.macro.Expr;
 #else
+import express.Express;
 import haxe.Constraints.Function;
 #end
 
 class Router {
-  var server : Dynamic;
-  public function new(server : Dynamic) {
+#if !macro
+  var server : Express;
+  public function new(server : Express) {
     this.server = server;
   }
-#if !macro
   public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
     if(null == method)
       method = Get;
