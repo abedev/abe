@@ -20,9 +20,8 @@ class Auto implements restx.IRoute {
     response.send({name:name,age:age});
   }
 
-  @:get("/multi/meta/foo")
-  @:get("/multi/meta/bar")
-  @:post("multi/meta/baz")
+  @:put("/multi/meta/foo")
+  @:post("/multi/meta/foo")
   function handleMultiple() {
     response.send("HANDLE MULTIPLE");
   }
