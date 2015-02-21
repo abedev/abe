@@ -2,6 +2,7 @@ package express;
 
 import js.Error;
 
+// TODO check return types for method that return Void
 extern class Response extends js.node.http.ServerResponse {
   var app : Express;
   var headersSend : Bool;
@@ -33,6 +34,13 @@ extern class Response extends js.node.http.ServerResponse {
   @:overload(function(body : String) : Void {})
   @:overload(function(body : Array<Dynamic>) : Void {})
   function send(body : {}) : Void;
+  function sendFile(path : String, ?options : SendFileOptions, ?callback : Error -> Void) : Void;
+  function sendStatus(statusCode : Int) : Void;
+  @:overload(function(field : String, value : String) : Void {})
+  function set(body : Dynamic<String>) : Void;
+  function status(statusCode : Int) : Response;
+  function type(type : String) : String;
+  function vary(field : String) : Response;
 }
 
 typedef CookieOptions = {
@@ -43,4 +51,12 @@ typedef CookieOptions = {
   ?path : String,
   ?secure : Bool,
   ?signed : Bool,
+}
+
+typedef SendFileOptions = {
+  ?maxAge : String,
+  ?root : String,
+  ?lastModified : String,
+  ?headers : Dynamic<String>,
+  ?dotfiles : String
 }
