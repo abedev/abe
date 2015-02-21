@@ -11,6 +11,7 @@ class TestAll {
     // run REST tests
     runner.addCase(new TestManual());
     runner.addCase(new TestAuto());
+    runner.addCase(new TestParam());
 
     // report
     Report.create(runner);

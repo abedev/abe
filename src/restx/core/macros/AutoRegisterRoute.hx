@@ -143,10 +143,31 @@ class AutoRegisterRoute {
               name : arg.name,
               optional : arg.opt,
               type : arg.t.toString(),
-              sources : ["params"]
+              sources : getSources(field)
           };
         });
       case _: [];
     };
+  }
+
+  static function getSources(field : ClassField) {
+    var meta = Macros.findMeta(field.meta.get(), ":args");
+    if(null == meta)
+      return ["params"];
+    var sources = meta.params.map(function(p) return switch p.expr {
+      case EConst(CIdent(id)), EConst(CString(id)):
+        [id.toLowerCase()];
+      case EArrayDecl(arr): arr.map(function(p) return switch p.expr {
+          case EConst(CIdent(id)): id.toLowerCase();
+          case _: Context.error("parameter for query should be an identifier or an array of identifiers", field.pos);
+        });
+      case _:
+        Context.error("parameter for query should be an identifier or an array of identifiers", field.pos);
+    }).flatten();
+    sources.map(function(source) switch source {
+        case "query", "params", "body":
+        case _: Context.error('"$source" is not a valid @:source()', field.pos);
+      });
+    return sources;
   }
 }
