@@ -6,6 +6,7 @@ import haxe.macro.Expr;
 using haxe.macro.TypeTools;
 import restx.core.macros.Macros.*;
 using thx.core.Iterables;
+using thx.core.Arrays;
 
 class AutoRegisterRoute {
   public static function register(router : Expr, instance : Expr) : Expr {
@@ -15,18 +16,18 @@ class AutoRegisterRoute {
     var fields = filterControllerMethods(type.fields.get());
 
     var definitions = fields.map(function(field) {
-        var metas   = field.meta.get(),
-            meta    = findMetaFromNames(metas, restx.Methods.list),
-            method  = meta.name.substring(1),
-            path    = getMetaAsString(meta, 0),
-            args    = getArguments(field);
-        return {
-          name : field.name,
-          path : path,
-          args : args,
-          method: method
-        };
-      });
+        var metadata = field.meta.get(),
+            metas    = findMetaFromNames(metadata, restx.Methods.list);
+
+        return metas.map(function (meta) {
+          return {
+            name: field.name,
+            path: getMetaAsString(meta, 0),
+            args: getArguments(field),
+            method: meta.name.substring(1)
+          }
+        });
+      }).flatten();
 
     if(definitions.length == 0) {
       Context.error("There are no controller methods defined in this class", Context.currentPos());
