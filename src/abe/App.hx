@@ -11,7 +11,7 @@ class App {
 
   var server : Express;
   public function new() {
-    server = new Express({});
+    server = new Express();
     var r  = new express.Router();
     server.use("/", r);
     router = new Router(r);
