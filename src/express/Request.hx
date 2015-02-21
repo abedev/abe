@@ -1,5 +1,6 @@
 package express;
 
+// TODO is extending js.node.http.IncomingMessage right?
 extern class Request extends js.node.http.IncomingMessage {
   var app : Express;
   var baseUrl : String;
