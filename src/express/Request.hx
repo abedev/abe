@@ -1,6 +1,5 @@
 package express;
 
-// TODO check return types for method that return Void
 extern class Request extends js.node.http.IncomingMessage {
   var app : Express;
   var baseUrl : String;
