@@ -9,7 +9,7 @@ WARNING: this is an experimental project and might be dropped at any time.
 
 ### Setup
 
-Create a new instance of a restx.App, which listens for http traffic on a port of your choice:
+Create a new instance of a `restx.App`, which listens for http traffic on a port of your choice:
 
 ```haxe
 import restx.App;
@@ -34,6 +34,10 @@ class RouteHandler implements restx.IRoute {
 ```
 
 ### Routes
+
+TODO
+
+By default arguments are taken from `params` (the route path) but with the `@:args()` meta you can take the arguments from: `query`, `body` or `params`. @:args can also take an array of sources when multiple sources are desired. Sources can be specified as either identifiers (no quotes) or strings.
 
 #### Basic HTTP Methods
 

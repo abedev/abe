@@ -7,10 +7,12 @@ using haxe.macro.TypeTools;
 import restx.core.macros.Macros.*;
 using thx.core.Iterables;
 using thx.core.Arrays;
+using thx.core.Strings;
 
 class AutoRegisterRoute {
   public static function register(router : Expr, instance : Expr) : Expr {
-    var type = getClassType(instance);
+    var type = getClassType(instance),
+        prefix = getPrefix(type.meta.get(), type.pos);
 
     // iterate on all the fields and filter the functions that have @:{method}
     var fields = filterControllerMethods(type.fields.get());
@@ -19,10 +21,10 @@ class AutoRegisterRoute {
         var metadata = field.meta.get(),
             metas    = findMetaFromNames(metadata, restx.Methods.list);
 
-        return metas.map(function (meta) {
+        return metas.map(function(meta) {
           return {
             name: field.name,
-            path: getMetaAsString(meta, 0),
+            path: prefix + getMetaAsString(meta, 0),
             args: getArguments(field),
             method: meta.name.substring(1)
           }
@@ -99,6 +101,20 @@ class AutoRegisterRoute {
     })($instance, $router);
   }
 
+  static function getPrefix(meta : Array<MetadataEntry>, pos) {
+    var m = findMeta(meta, ":path");
+    if(null == m) return "";
+    if(m.params.length != 1)
+      Context.error("@:path() should only contain one string", pos);
+    return switch m.params[0].expr {
+      case EConst(CString(path)):
+        path = path.trimChars('/');
+        path.length == 0 ? "" : '/$path';
+      case _:
+        Context.error("@:path() should use a string", pos);
+    };
+  }
+
   static function getClassType(expr : Expr) return switch Context.follow(Context.typeof(expr)) {
     case TInst(t, _) if(classImplementsInterface(t.get(), "restx.IRoute")): t.get();
     case _: Context.error('expression in Router.register must be an instance of an IRoute', Context.currentPos());
@@ -143,10 +159,31 @@ class AutoRegisterRoute {
               name : arg.name,
               optional : arg.opt,
               type : arg.t.toString(),
-              sources : ["params"]
+              sources : getSources(field)
           };
         });
       case _: [];
     };
+  }
+
+  static function getSources(field : ClassField) {
+    var meta = findMeta(field.meta.get(), ":args");
+    if(null == meta)
+      return ["params"];
+    var sources = meta.params.map(function(p) return switch p.expr {
+      case EConst(CIdent(id)), EConst(CString(id)):
+        [id.toLowerCase()];
+      case EArrayDecl(arr): arr.map(function(p) return switch p.expr {
+          case EConst(CIdent(id)): id.toLowerCase();
+          case _: Context.error("parameter for query should be an identifier or an array of identifiers", field.pos);
+        });
+      case _:
+        Context.error("parameter for query should be an identifier or an array of identifiers", field.pos);
+    }).flatten();
+    sources.map(function(source) switch source {
+        case "query", "params", "body":
+        case _: Context.error('"$source" is not a valid @:source()', field.pos);
+      });
+    return sources;
   }
 }
