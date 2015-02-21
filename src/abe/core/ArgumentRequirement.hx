@@ -1,4 +1,4 @@
-package restx.core;
+package abe.core;
 
 typedef ArgumentRequirement = {
   name : String,

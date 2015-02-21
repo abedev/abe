@@ -2,7 +2,7 @@ package routes;
 
 import utest.Assert;
 
-class Auto implements restx.IRoute {
+class Auto implements abe.IRoute {
   @:get("/auto/")
   function noParams() {
     response.send("DONE");

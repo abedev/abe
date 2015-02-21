@@ -1,5 +1,5 @@
 {
-  "name": "restx",
+  "name": "abe",
   "version": "0.0.1",
   "description": "Easy webserver for Haxe and NodeJS built on top of Express",
   "main": "bin/server.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fponticelli/restx"
+    "url": "https://github.com/abedev/abe"
   },
   "author": "Franco Ponticelli <franco.ponticelli@gmail.com>",
   "license": "ISC",

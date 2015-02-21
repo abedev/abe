@@ -1,7 +1,7 @@
-package restx.core;
+package abe.core;
 
 using haxe.ds.Option;
-import restx.core.ArgumentProcessing;
+import abe.core.ArgumentProcessing;
 using thx.promise.Future;
 using thx.promise.Promise;
 

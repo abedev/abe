@@ -1,10 +1,10 @@
-package restx;
+package abe;
 
 import express.Next;
 import express.Request;
 import express.Response;
 import js.Error;
-import restx.core.ArgumentProcessor;
+import abe.core.ArgumentProcessor;
 
 class RouteProcess<TRoute : IRoute, TArgs : {}> {
   var instance : TRoute;

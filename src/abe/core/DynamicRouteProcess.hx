@@ -1,7 +1,7 @@
-package restx.core;
+package abe.core;
 
 import haxe.Constraints.Function;
-import restx.core.ArgumentProcessor;
+import abe.core.ArgumentProcessor;
 
 class DynamicRouteProcess extends RouteProcess<IRoute, {}> {
   var method : Function;

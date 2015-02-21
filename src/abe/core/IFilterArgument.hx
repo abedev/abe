@@ -1,4 +1,4 @@
-package restx.core;
+package abe.core;
 
 import thx.promise.Promise;
 

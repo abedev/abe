@@ -2,7 +2,7 @@ package routes;
 
 import utest.Assert;
 
-class Manual implements restx.IRoute {
+class Manual implements abe.IRoute {
   public function noArgs() {
     response.send("Hello World");
   }

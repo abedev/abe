@@ -1,6 +1,6 @@
-package restx.core;
+package abe.core;
 
-import restx.core.filters.*;
+import abe.core.filters.*;
 
 class ArgumentsFilter {
   static var globalFilters : Array<IFilterArgument<Dynamic>> = [

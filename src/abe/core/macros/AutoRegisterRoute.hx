@@ -1,10 +1,10 @@
-package restx.core.macros;
+package abe.core.macros;
 
 import haxe.macro.Type;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 using haxe.macro.TypeTools;
-import restx.core.macros.Macros.*;
+import abe.core.macros.Macros.*;
 using thx.core.Iterables;
 using thx.core.Arrays;
 using thx.core.Strings;
@@ -19,7 +19,7 @@ class AutoRegisterRoute {
 
     var definitions = fields.map(function(field) {
         var metadata = field.meta.get(),
-            metas    = findMetaFromNames(metadata, restx.Methods.list);
+            metas    = findMetaFromNames(metadata, abe.Methods.list);
 
         return metas.map(function(meta) {
           return {
@@ -41,7 +41,7 @@ class AutoRegisterRoute {
       var fullName = type.pack.concat([processName]).join("."),
           exprs  = [];
 
-      exprs.push(Context.parse('var filters = new restx.core.ArgumentsFilter()',
+      exprs.push(Context.parse('var filters = new abe.core.ArgumentsFilter()',
                 Context.currentPos()));
       var args = definition.args.map(function(arg) {
               var sources = arg.sources.map(function(s) return '"$s"').join(", ");
@@ -55,7 +55,7 @@ class AutoRegisterRoute {
           emptyArgs = definition.args.map(function(arg) {
               return '${arg.name} : null';
             }).join(", ");
-      exprs.push(Context.parse('var processor = new restx.core.ArgumentProcessor(filters, [${args}])',
+      exprs.push(Context.parse('var processor = new abe.core.ArgumentProcessor(filters, [${args}])',
                 Context.currentPos()));
       exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)',
                 Context.currentPos()));
@@ -77,7 +77,7 @@ class AutoRegisterRoute {
             pack : type.pack,
             name : processName,
             kind : TDClass({
-                pack : ["restx"],
+                pack : ["abe"],
                 name : "RouteProcess",
                 params : [
                   TPType(TPath({
@@ -116,7 +116,7 @@ class AutoRegisterRoute {
   }
 
   static function getClassType(expr : Expr) return switch Context.follow(Context.typeof(expr)) {
-    case TInst(t, _) if(classImplementsInterface(t.get(), "restx.IRoute")): t.get();
+    case TInst(t, _) if(classImplementsInterface(t.get(), "abe.IRoute")): t.get();
     case _: Context.error('expression in Router.register must be an instance of an IRoute', Context.currentPos());
   }
 
@@ -133,7 +133,7 @@ class AutoRegisterRoute {
     for(field in fields) {
       for(meta in field.meta.get()) {
         var find = meta.name.substring(1);
-        if (!restx.Methods.list.any(function (method) return method == find)) {
+        if (!abe.Methods.list.any(function (method) return method == find)) {
           continue;
         }
         results.push(field);

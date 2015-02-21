@@ -1,8 +1,8 @@
-package restx.core.macros;
+package abe.core.macros;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
-import restx.core.macros.Macros.*;
+import abe.core.macros.Macros.*;
 
 class BuildIRoute {
   macro public static function complete() : Array<Field> {
@@ -44,7 +44,7 @@ class BuildIRoute {
 
   static function makeControllerFunctionsPublic(fields : Array<Field>) {
     for(field in fields) {
-      for (method in restx.Methods.list)
+      for (method in abe.Methods.list)
         if(hasMeta(field.meta, ":" + method))
           makeFieldPublic(field);
     }

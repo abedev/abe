@@ -1,6 +1,6 @@
 {
-  "name": "restx",
-  "url": "https://github.com/fponticelli/restx",
+  "name": "abe",
+  "url": "https://github.com/abedev/abe",
   "license": "MIT",
   "classPath": "src",
   "tags": ["nodejs", "webserver", "rest"],

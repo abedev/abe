@@ -1,8 +1,8 @@
-import restx.core.DynamicRouteProcess;
+import abe.core.DynamicRouteProcess;
 import utest.Assert;
 import routes.*;
-import restx.core.Source;
-import restx.core.ArgumentProcessor;
+import abe.core.Source;
+import abe.core.ArgumentProcessor;
 
 class TestManual extends TestCalls {
   public function testManual() {

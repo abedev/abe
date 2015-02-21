@@ -1,4 +1,4 @@
-package restx.core.macros;
+package abe.core.macros;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;

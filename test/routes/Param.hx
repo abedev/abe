@@ -2,7 +2,7 @@ package routes;
 
 import utest.Assert;
 
-class Param implements restx.IRoute {
+class Param implements abe.IRoute {
   @:get("/list/")
   @:args(query)
   function fromQS(page : Int = 1) {

@@ -1,5 +1,5 @@
-package restx;
-import restx.Method;
+package abe;
+import abe.Method;
 
 #if macro
 import haxe.macro.Expr;
@@ -41,5 +41,5 @@ class Router {
   }
 #end
   macro public function register(_this : Expr, instance : Expr)
-    return restx.core.macros.AutoRegisterRoute.register(_this, instance);
+    return abe.core.macros.AutoRegisterRoute.register(_this, instance);
 }

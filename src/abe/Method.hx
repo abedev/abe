@@ -1,4 +1,4 @@
-package restx;
+package abe;
 
 @:enum abstract Method(String) from String to String {
   var All = "all";

@@ -1,6 +1,6 @@
-# restx
+# abe
 
-[![Join the chat at https://gitter.im/fponticelli/restx](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fponticelli/restx?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/abedev/abe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/abedev/abe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Build REST apis with Haxe and nodejs.
 
@@ -9,10 +9,10 @@ WARNING: this is an experimental project and might be dropped at any time.
 
 ### Setup
 
-Create a new instance of a `restx.App`, which listens for http traffic on a port of your choice:
+Create a new instance of a `abe.App`, which listens for http traffic on a port of your choice:
 
 ```haxe
-import restx.App;
+import abe.App;
 
 class Main {
   public static function main() {
@@ -26,7 +26,7 @@ class Main {
 The above code registers all routes in your `RouteHandler` class, which could look something like this:
 
 ```haxe
-class RouteHandler implements restx.IRoute {
+class RouteHandler implements abe.IRoute {
   @:get("/")
   function index()
     response.send("Hello World!");

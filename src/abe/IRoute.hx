@@ -1,10 +1,10 @@
-package restx;
+package abe;
 
 import express.Next;
 import express.Request;
 import express.Response;
 
-@:autoBuild(restx.core.macros.BuildIRoute.complete())
+@:autoBuild(abe.core.macros.BuildIRoute.complete())
 interface IRoute {
   public var request : Request;
   public var response : Response;
