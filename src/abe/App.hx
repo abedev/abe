@@ -17,6 +17,12 @@ class App {
     router = new Router(r);
   }
 
+  public function sub(path : String) {
+    var sub = new App();
+    express.use(path, sub.express);
+    return sub;
+  }
+
   public function http(port : Int, ?host : String, ?backlog : Int, ?callback : Void -> Void) {
     var server = Http.createServer(cast express);
     server.listen(port, host, backlog, callback);
