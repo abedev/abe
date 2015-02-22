@@ -1,14 +1,12 @@
 package express;
 
 @:jsRequire("express", "Router")
-extern class Router {
+extern class Router extends Routes {
   @:selfCall function new(?options : RouterOptions) : Void;
-
-  // TODO: complete
-  @:overload(function(path : String, router : Router) : Express {})
-  function use(?path : String, middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware, ?middleware : Middleware) : Express;
-
-  function listen(port : Int, ?hostname : String, ?backlog : Int, ?callback : Void -> Void) : Void;
+  function param(?name : String, callback : Request -> Response -> Next -> String -> Void) : Void;
+  function path() : String;
+  @:overload(function(?path : String, router : Router) : Router {})
+  function use(?path : String, callback : Middleware, callbacks : haxe.Rest<Middleware>) : Router;
 }
 
 typedef RouterOptions = {
