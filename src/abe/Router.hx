@@ -12,28 +12,28 @@ import haxe.Constraints.Function;
 
 class Router {
 #if !macro
-  var router : R;
-  public function new(router : R) {
-    this.router = router;
+  public var expressRouter(default, null) : R;
+  public function new(expressRouter : R) {
+    this.expressRouter = expressRouter;
   }
 
   public function mount(path : String) {
     var newrouter = new R();
-    router.use(path, newrouter);
+    expressRouter.use(path, newrouter);
     return new Router(newrouter);
   }
 
   public function use(?path : String, middleware : Middleware) {
     if(null == path)
-      router.use(middleware);
+      expressRouter.use(middleware);
     else
-      router.use(path, middleware);
+      expressRouter.use(path, middleware);
   }
 
   public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
     Reflect.callMethod(
-      router,
-      Reflect.field(router, method), [
+      expressRouter,
+      Reflect.field(expressRouter, method), [
         path,
         process.run
       ]
