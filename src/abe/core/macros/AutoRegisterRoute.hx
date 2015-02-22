@@ -100,6 +100,7 @@ class AutoRegisterRoute {
     // registerMethod(path, method, router)
     return macro (function(instance, parent : abe.Router) {
       $b{exprs}
+      return router;
     })($instance, $router);
   }
 
