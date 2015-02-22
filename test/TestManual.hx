@@ -27,7 +27,7 @@ class TestManual extends TestCalls {
               { name : "s", type : "String", optional : false, sources : [Params] }
             ])));
 
-    request("/manual/withargs/7/false/text", Get, function(msg) {
+    get("/manual/withargs/7/false/text", function(msg) {
       Assert.equals('{"i":7,"b":false,"s":"text"}', msg);
     });
   }
@@ -41,11 +41,11 @@ class TestManual extends TestCalls {
               { name : "b", type : "Bool", optional : false, sources : [Params] }
             ])));
 
-    request("/manual/optionalarg/true/?i=9", Get, function(msg) {
+    get("/manual/optionalarg/true/?i=9", function(msg) {
       Assert.equals('{"i":9,"b":true}', msg);
     });
 
-    request("/manual/optionalarg/true/", Get, function(msg) {
+    get("/manual/optionalarg/true/", function(msg) {
       Assert.equals('{"i":null,"b":true}', msg);
     });
   }

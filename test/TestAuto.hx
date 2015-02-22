@@ -6,11 +6,11 @@ class TestAuto extends TestCalls {
   public function testAuto() {
     router.register(new Auto());
 
-    request("/auto/", Get, function(msg) {
+    get("/auto/", function(msg) {
       Assert.equals('DONE', msg);
     });
 
-    request("/auto/", Post, {foo: 'bar'}, function(msg : String) {
+    post("/auto/", {foo: 'bar'}, function(msg : String) {
       Assert.equals('POSTED', msg);
     });
   }
@@ -21,25 +21,25 @@ class TestAuto extends TestCalls {
     router.register(new Auto());
 
     // make sure the @:all route can handle a variety of http methods
-    request("/handle/everything/", Get, function(msg : String) {
+    get("/handle/everything/", function(msg : String) {
       Assert.equals(Get, msg);
     });
 
-    request("/handle/everything/", Post, function(msg : String) {
+    post("/handle/everything/", {}, function(msg : String) {
       Assert.equals(Post, msg);
     });
 
-    request("/handle/everything/", Delete, function(msg : String) {
+    delete("/handle/everything/", function(msg : String) {
       Assert.equals(Delete, msg);
     });
 
     // attaching multiple meta methods to the same handler should cause that
     // handler to run for multiple paths or methods
-    request("/multi/meta/foo", Put, function(msg : String) {
+    put("/multi/meta/foo", {}, function(msg : String) {
       Assert.equals("HANDLE MULTIPLE", msg);
     });
 
-    request("/multi/meta/foo", Post, function(msg : String) {
+    post("/multi/meta/foo", {}, function(msg : String) {
       Assert.equals("HANDLE MULTIPLE", msg);
     });
   }
@@ -48,7 +48,7 @@ class TestAuto extends TestCalls {
     var sub = router.mount("/sub/");
     sub.register(new Auto());
 
-    request("/sub/auto/", Get, function(msg) {
+    get("/sub/auto/", function(msg) {
       Assert.equals('DONE', msg);
     });
   }
