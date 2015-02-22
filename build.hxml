@@ -2,6 +2,7 @@
 -lib thx.promise
 -lib hxnodejs
 -lib utest
+-lib express
 -cp src
 -cp extern
 -cp test
