@@ -24,7 +24,7 @@ class AutoRegisterRoute {
         return metas.map(function(meta) {
           return {
             name: field.name,
-            path: prefix + getMetaAsString(meta, 0),
+            path: getMetaAsString(meta, 0),
             args: getArguments(field),
             method: meta.name.substring(1)
           }
@@ -35,7 +35,9 @@ class AutoRegisterRoute {
       Context.error("There are no controller methods defined in this class", Context.currentPos());
     }
 
-    var exprs = definitions.map(function(definition) {
+    var exprs = [macro var router = parent.mount($v{prefix})];
+
+    exprs = exprs.concat(definitions.map(function(definition) {
       // create a class type for each controller function
       var processName = [type.name, definition.name, "RouteProcess"].join("_");
       var fullName = type.pack.concat([processName]).join("."),
@@ -93,23 +95,22 @@ class AutoRegisterRoute {
 
       // pass additional filters
       return macro $b{exprs};
-    });
+    }));
 
     // registerMethod(path, method, router)
-    return macro (function(instance, router) {
+    return macro (function(instance, parent : abe.Router) {
       $b{exprs}
     })($instance, $router);
   }
 
   static function getPrefix(meta : Array<MetadataEntry>, pos) {
     var m = findMeta(meta, ":path");
-    if(null == m) return "";
+    if(null == m) return "/";
     if(m.params.length != 1)
       Context.error("@:path() should only contain one string", pos);
     return switch m.params[0].expr {
       case EConst(CString(path)):
-        path = path.trimChars('/');
-        path.length == 0 ? "" : '/$path';
+        path;
       case _:
         Context.error("@:path() should use a string", pos);
     };
