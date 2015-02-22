@@ -30,14 +30,15 @@ class Router {
       expressRouter.use(path, middleware);
   }
 
-  public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>) {
+  public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>, ?middlewares : Array<Middleware>) {
+    var args : Array<Dynamic> = [path];
+    if(null != middlewares) {
+      args = args.concat(middlewares);
+    }
+    args.push(process.run);
     Reflect.callMethod(
       expressRouter,
-      Reflect.field(expressRouter, method), [
-        path,
-        process.run
-      ]
-    );
+      Reflect.field(expressRouter, method), args);
   }
 #end
   macro public function register(_this : Expr, instance : Expr)
