@@ -1,5 +1,6 @@
 package abe.core.macros;
 
+import haxe.macro.ExprTools;
 import haxe.macro.Type;
 import haxe.macro.Context;
 import haxe.macro.Expr;
@@ -12,21 +13,24 @@ using thx.core.Strings;
 class AutoRegisterRoute {
   public static function register(router : Expr, instance : Expr) : Expr {
     var type = getClassType(instance),
-        prefix = getPrefix(type.meta.get(), type.pos);
-
+        prefix = getPrefix(type.meta.get(), type.pos),
+        pos  = type.pos,
+        uses = getUses(type.meta.get());
     // iterate on all the fields and filter the functions that have @:{method}
     var fields = filterControllerMethods(type.fields.get());
 
     var definitions = fields.map(function(field) {
         var metadata = field.meta.get(),
-            metas    = findMetaFromNames(metadata, abe.Methods.list);
+            metas    = findMetaFromNames(metadata, abe.Methods.list),
+            uses     = getUses(metadata);
 
         return metas.map(function(meta) {
           return {
             name: field.name,
-            path: prefix + getMetaAsString(meta, 0),
+            path: getMetaAsString(meta, 0),
             args: getArguments(field),
-            method: meta.name.substring(1)
+            method: meta.name.substring(1),
+            uses: uses.map(ExprTools.toString)
           }
         });
       }).flatten();
@@ -35,7 +39,12 @@ class AutoRegisterRoute {
       Context.error("There are no controller methods defined in this class", Context.currentPos());
     }
 
-    var exprs = definitions.map(function(definition) {
+    var exprs = [macro var router = parent.mount($v{prefix})];
+
+    exprs = exprs.concat(uses.map(
+      function(use) return macro router.use("/", $e{use})));
+
+    exprs = exprs.concat(definitions.map(function(definition) {
       // create a class type for each controller function
       var processName = [type.name, definition.name, "RouteProcess"].join("_");
       var fullName = type.pack.concat([processName]).join("."),
@@ -52,17 +61,10 @@ class AutoRegisterRoute {
                 sources : [$sources]
               }';
             }).join(", "),
-          emptyArgs = definition.args.map(function(arg) {
-              return '${arg.name} : null';
-            }).join(", ");
-      exprs.push(Context.parse('var processor = new abe.core.ArgumentProcessor(filters, [${args}])',
-                Context.currentPos()));
-      exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)',
-                Context.currentPos()));
-
-      var path = definition.path,
-          method = definition.method;
-      exprs.push(macro router.registerMethod($v{path}, $v{method}, cast process));
+          emptyArgs = definition.args.map(function(arg) return '${arg.name} : null').join(", ");
+      exprs.push(Context.parse('var processor = new abe.core.ArgumentProcessor(filters, [${args}])', pos));
+      exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)', pos));
+      exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, [${definition.uses.join(", ")}])', pos));
 
       var params = definition.args.map(function(arg) : Field return {
             pos : Context.currentPos(),
@@ -91,25 +93,32 @@ class AutoRegisterRoute {
           });
       }
 
-      // pass additional filters
-      return macro $b{exprs};
-    });
+      return exprs;
+    }).flatten());
 
+  exprs.push(macro return router);
     // registerMethod(path, method, router)
-    return macro (function(instance, router) {
+    var result = macro (function(instance, parent : abe.Router)
       $b{exprs}
-    })($instance, $router);
+    )($instance, $router);
+    //trace(ExprTools.toString(result));
+    return result;
+  }
+
+  static function getUses(meta : Array<MetadataEntry>) {
+    var m = findMeta(meta, ":use");
+    if(null == m) return [];
+    return m.params;
   }
 
   static function getPrefix(meta : Array<MetadataEntry>, pos) {
     var m = findMeta(meta, ":path");
-    if(null == m) return "";
+    if(null == m) return "/";
     if(m.params.length != 1)
       Context.error("@:path() should only contain one string", pos);
     return switch m.params[0].expr {
       case EConst(CString(path)):
-        path = path.trimChars('/');
-        path.length == 0 ? "" : '/$path';
+        path;
       case _:
         Context.error("@:path() should use a string", pos);
     };

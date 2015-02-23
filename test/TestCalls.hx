@@ -22,6 +22,18 @@ class TestCalls {
     server.close();
   }
 
+  function get(path : String, callback : String -> Void)
+    request(path, Get, callback);
+
+  function post(path : String, body : {}, callback : String -> Void)
+    request(path, Post, body, callback);
+
+  function put(path : String, body : {}, callback : String -> Void)
+    request(path, Put, body, callback);
+
+  function delete(path : String, callback : String -> Void)
+    request(path, Delete, callback);
+
   function request(path : String, method : Method, ?payload : {}, callback : String -> Void) {
     var done = Assert.createAsync(2000);
     var r = Http.request({
