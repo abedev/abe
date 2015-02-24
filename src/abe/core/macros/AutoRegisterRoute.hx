@@ -79,7 +79,7 @@ class AutoRegisterRoute {
             pack : type.pack,
             name : processName,
             kind : TDClass({
-                pack : ["abe"],
+                pack : ["abe", "core"],
                 name : "RouteProcess",
                 params : [
                   TPType(TPath({

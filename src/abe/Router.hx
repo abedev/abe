@@ -8,6 +8,7 @@ import express.Express;
 import express.Middleware;
 import express.Router in R;
 import haxe.Constraints.Function;
+import abe.core.RouteProcess;
 #end
 
 class Router {
