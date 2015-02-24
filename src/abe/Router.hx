@@ -29,6 +29,7 @@ class Router {
       expressRouter.use(middleware);
     else
       expressRouter.use(path, middleware);
+    return this;
   }
 
   public function registerMethod(path : String, method : Method, process : RouteProcess<IRoute, {}>, ?middlewares : Array<Middleware>) {
@@ -40,6 +41,12 @@ class Router {
     Reflect.callMethod(
       expressRouter,
       Reflect.field(expressRouter, method), args);
+    return this;
+  }
+
+  public function serve(path : String, root : String, ?options : express.StaticOptions) {
+    expressRouter.use(path, Express.serveStatic(root, options));
+    return this;
   }
 #end
   macro public function register(_this : Expr, instance : Expr)
