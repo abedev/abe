@@ -1,4 +1,4 @@
-package abe;
+package abe.core;
 
 import express.Next;
 import express.Request;
@@ -24,12 +24,8 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
           instance.response = res;
           instance.next = next;
           execute();
-        case Required(param):
-          // TODO add proper status code
-          (next : Error -> Void)(new Error('Parameter "$param" is required'));
-        case InvalidFilter(err):
-          // TODO add proper status code
-          (next : Error -> Void)(err);
+        case Required(_), InvalidFilter(_):
+          (next : Void -> Void)();
       }
     });
 
