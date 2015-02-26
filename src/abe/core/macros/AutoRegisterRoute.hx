@@ -15,8 +15,10 @@ class AutoRegisterRoute {
     var type = getClassType(instance),
         prefix = getPrefix(type.meta.get(), type.pos),
         pos  = type.pos,
-        uses = getUses(type.meta.get()),
-        errors = getErrors(type.meta.get());
+        meta = type.meta.get(),
+        uses = getUses(meta),
+        errors = getErrors(meta),
+        filters = getFilters(meta);
     // iterate on all the fields and filter the functions that have @:{method}
     var fields = filterControllerMethods(type.fields.get());
 
@@ -24,7 +26,8 @@ class AutoRegisterRoute {
         var metadata = field.meta.get(),
             metas    = findMetaFromNames(metadata, abe.Methods.list),
             uses     = getUses(metadata),
-            errors   = getErrors(metadata);
+            errors   = getErrors(metadata),
+            filters  = getFilters(metadata);
 
         return metas.map(function(meta) {
           return {
@@ -33,7 +36,8 @@ class AutoRegisterRoute {
             args: getArguments(field),
             method: meta.name.substring(1),
             uses: uses.map(ExprTools.toString),
-            errors: errors.map(ExprTools.toString)
+            errors: errors.map(ExprTools.toString),
+            filters: filters.map(ExprTools.toString)
           }
         });
       }).flatten();
@@ -47,6 +51,12 @@ class AutoRegisterRoute {
     exprs = exprs.concat(uses.map(
       function(use) return macro router.use("/", $e{use})));
 
+    if(filters.length > 0) {
+      var sfilters = filters.map(ExprTools.toString);
+      exprs.push(Context.parse('var commonFilters = [${sfilters.join(", ")}]',
+          Context.currentPos()));
+    }
+
     exprs = exprs.concat(definitions.map(function(definition) {
       // create a class type for each controller function
       var processName = [type.name, definition.name, "RouteProcess"].join("_");
@@ -55,6 +65,16 @@ class AutoRegisterRoute {
 
       exprs.push(Context.parse('var filters = new abe.core.ArgumentsFilter()',
                 Context.currentPos()));
+      if(filters.length > 0) {
+        filters
+          .map(ExprTools.toString)
+          .map(function(filter) {
+            exprs.push(Context.parse('filters.addFilter($filter)',
+              Context.currentPos()));
+          });
+      }
+      for(filter in definition.filters)
+        exprs.push(Context.parse('filters.addFilter($filter)', pos));
       var args = definition.args.map(function(arg) {
               var sources = arg.sources.map(function(s) return '"$s"').join(", ");
               return '{
@@ -111,17 +131,20 @@ class AutoRegisterRoute {
     return result;
   }
 
-  static function getUses(meta : Array<MetadataEntry>) {
-    var m = findMeta(meta, ":use");
+  static function getEntries(name : String, meta : Array<MetadataEntry>) {
+    var m = findMeta(meta, name);
     if(null == m) return [];
     return m.params;
   }
 
-  static function getErrors(meta : Array<MetadataEntry>) {
-    var m = findMeta(meta, ":error");
-    if(null == m) return [];
-    return m.params;
-  }
+  static function getUses(meta : Array<MetadataEntry>)
+    return getEntries(":use", meta);
+
+  static function getErrors(meta : Array<MetadataEntry>)
+    return getEntries(":error", meta);
+
+  static function getFilters(meta : Array<MetadataEntry>)
+    return getEntries(":filter", meta);
 
   static function getPrefix(meta : Array<MetadataEntry>, pos) {
     var m = findMeta(meta, ":path");
