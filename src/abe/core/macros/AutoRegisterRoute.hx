@@ -15,14 +15,16 @@ class AutoRegisterRoute {
     var type = getClassType(instance),
         prefix = getPrefix(type.meta.get(), type.pos),
         pos  = type.pos,
-        uses = getUses(type.meta.get());
+        uses = getUses(type.meta.get()),
+        errors = getErrors(type.meta.get());
     // iterate on all the fields and filter the functions that have @:{method}
     var fields = filterControllerMethods(type.fields.get());
 
     var definitions = fields.map(function(field) {
         var metadata = field.meta.get(),
             metas    = findMetaFromNames(metadata, abe.Methods.list),
-            uses     = getUses(metadata);
+            uses     = getUses(metadata),
+            errors   = getErrors(metadata);
 
         return metas.map(function(meta) {
           return {
@@ -30,7 +32,8 @@ class AutoRegisterRoute {
             path: getMetaAsString(meta, 0),
             args: getArguments(field),
             method: meta.name.substring(1),
-            uses: uses.map(ExprTools.toString)
+            uses: uses.map(ExprTools.toString),
+            errors: errors.map(ExprTools.toString)
           }
         });
       }).flatten();
@@ -64,7 +67,7 @@ class AutoRegisterRoute {
           emptyArgs = definition.args.map(function(arg) return '${arg.name} : null').join(", ");
       exprs.push(Context.parse('var processor = new abe.core.ArgumentProcessor(filters, [${args}])', pos));
       exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)', pos));
-      exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, [${definition.uses.join(", ")}])', pos));
+      exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, [${definition.uses.join(", ")}], [${definition.errors.join(", ")}])', pos));
 
       var params = definition.args.map(function(arg) : Field return {
             pos : Context.currentPos(),
@@ -96,6 +99,9 @@ class AutoRegisterRoute {
       return exprs;
     }).flatten());
 
+  exprs = exprs.concat(errors.map(
+    function(error) return macro router.error($e{error})));
+
   exprs.push(macro return router);
     // registerMethod(path, method, router)
     var result = macro (function(instance, parent : abe.Router)
@@ -107,6 +113,12 @@ class AutoRegisterRoute {
 
   static function getUses(meta : Array<MetadataEntry>) {
     var m = findMeta(meta, ":use");
+    if(null == m) return [];
+    return m.params;
+  }
+
+  static function getErrors(meta : Array<MetadataEntry>) {
+    var m = findMeta(meta, ":error");
     if(null == m) return [];
     return m.params;
   }
