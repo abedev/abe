@@ -38,7 +38,12 @@ class ArgumentProcessor<TArgs : {}> {
   static function getValue(name : String, source : { params : {}, query : {}, body : {} }, sources : Array<Source>) {
     var o, value;
     for(sourceName in sources) {
-      o = Reflect.field(source, sourceName);
+      var o = switch sourceName {
+        case Request: source;
+        case Body: source.body;
+        case Params: source.params;
+        case Query: source.query;
+      }
       if(null == o) continue;
       value = Reflect.field(o, name);
       if(null != value)

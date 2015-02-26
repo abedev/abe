@@ -201,8 +201,8 @@ class AutoRegisterRoute {
       case _:
         Context.error("parameter for query should be an identifier or an array of identifiers", field.pos);
     }).flatten();
-    sources.map(function(source) switch source {
-        case "query", "params", "body":
+    sources.map(function(source : Source) switch source {
+        case Query, Params, Body, Request:
         case _: Context.error('"$source" is not a valid @:source()', field.pos);
       });
     return sources;
