@@ -42,10 +42,6 @@ class AutoRegisterRoute {
         });
       }).flatten();
 
-    if(definitions.length == 0) {
-      Context.error("There are no controller methods defined in this class", Context.currentPos());
-    }
-
     var exprs = [macro var router = parent.mount($v{prefix})];
 
     exprs = exprs.concat(uses.map(
