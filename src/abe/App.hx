@@ -12,6 +12,7 @@ class App {
 
   public function new() {
     express = new Express();
+    express.set("x-powered-by", false);
     var r  = new express.Router();
     express.use("/", r);
     router = new Router(r);
