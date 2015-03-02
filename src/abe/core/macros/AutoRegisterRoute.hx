@@ -86,18 +86,15 @@ class AutoRegisterRoute {
       exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, [${definition.uses.join(", ")}], [${definition.errors.join(", ")}])', pos));
 
       var params = definition.args.map(function(arg) : Field{
-          var type = arg.type.split("<").shift(),
-              kind = Context.follow(Context.getType(type));
-          trace(Context.getType(type));
-
+          var kind = complexTypeFromString(arg.type);
           return {
             pos : Context.currentPos(),
             name : arg.name,
-            kind : FVar(kind.toComplexType())
+            kind : FVar(kind)
           };
         });
 
-      if(null == Context.getType(processName)) {
+      if(null == try Context.getType(processName) catch(e : Dynamic) null) {
         var fields = createProcessFields(definition.name, definition.args);
         Context.defineType({
             pos  : Context.currentPos(),
@@ -125,12 +122,17 @@ class AutoRegisterRoute {
     function(error) return macro router.error($e{error})));
 
   exprs.push(macro return router);
-    // registerMethod(path, method, router)
     var result = macro (function(instance, parent : abe.Router)
       $b{exprs}
     )($instance, $router);
-    //trace(ExprTools.toString(result));
     return result;
+  }
+
+  static function complexTypeFromString(s : String) : ComplexType {
+    return switch Context.parse('(_:$s)', Context.currentPos()) {
+      case { expr : EParenthesis({ expr : ECheckType(_, t) }) }: t;
+      case _: throw 'screw you';
+    };
   }
 
   static function getEntries(name : String, meta : Array<MetadataEntry>) {
