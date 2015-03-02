@@ -85,11 +85,17 @@ class AutoRegisterRoute {
       exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)', pos));
       exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, [${definition.uses.join(", ")}], [${definition.errors.join(", ")}])', pos));
 
-      var params = definition.args.map(function(arg) : Field return {
+      var params = definition.args.map(function(arg) : Field{
+          var type = arg.type.split("<").shift(),
+              kind = Context.follow(Context.getType(type));
+          trace(Context.getType(type));
+
+          return {
             pos : Context.currentPos(),
             name : arg.name,
-            kind : FVar(Context.follow(Context.getType(arg.type)).toComplexType())
-          });
+            kind : FVar(kind.toComplexType())
+          };
+        });
 
       if(null == Context.getType(processName)) {
         var fields = createProcessFields(definition.name, definition.args);
