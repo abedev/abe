@@ -9,6 +9,7 @@ class ArgumentsFilter {
     new FloatFilter(),
     new BoolFilter(),
     new StringFilter(),
+    new ArrayStringFilter()
   ];
 
   public static function registerFilter(filter : IFilterArgument<Dynamic>)
