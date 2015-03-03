@@ -70,7 +70,7 @@ class AutoRegisterRoute {
             kind : FVar(Context.follow(Context.getType(arg.type)).toComplexType())
           });
 
-      if(null == Context.getType(processName)) {
+      if(null == try Context.getType(processName) catch(e : Dynamic) null) {
         var fields = createProcessFields(definition.name, definition.args);
         Context.defineType({
             pos  : Context.currentPos(),
