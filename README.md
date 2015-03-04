@@ -4,9 +4,6 @@
 
 Build REST apis with Haxe and nodejs.
 
-WARNING: this is an experimental project and might be dropped at any time.
-
-
 ### Setup
 
 Create a new instance of a `abe.App`, which listens for http traffic on a port of your choice:
@@ -35,9 +32,18 @@ class RouteHandler implements abe.IRoute {
 
 ### Routes
 
-TODO
+abe makes super-easy getting typed parameters from user requests:
 
-By default arguments are taken from `params` (the route path) but with the `@:args()` meta you can take the arguments from: `query`, `body` or `params`. @:args can also take an array of sources when multiple sources are desired. Sources can be specified as either identifiers (no quotes) or strings.
+```haxe
+@:get("/user/:id")
+function getUser(id : Int) {
+  // do something with `id`
+}
+```
+
+In this case `getUser` is only invoked if `:id` is present and it is an integer value. If those rules are not satisfied, the routing process continues to the next handler. Multiple parameters are possible as are custom filter (ex: get the user object directly as a parameter instead of the `id`).
+
+By default arguments are taken from `params` (the route path) but with the `@:args()` meta you can take the arguments from: `query`, `body`, `params` or `request`. @:args can also take an array of sources when multiple sources are desired. Sources can be specified as either identifiers (no quotes) or strings.
 
 #### Basic HTTP Methods
 
@@ -95,3 +101,13 @@ function handleAllFooTraffic() {
 }
 ```
 
+TODO documentation:
+  * class level meta
+    * [ ] @:path
+    * [ ] @:use
+    * [ ] @:filter
+    * [ ] @:error
+  * handler level meta
+    * [ ] @:use
+    * [ ] @:filter
+    * [ ] @:error
