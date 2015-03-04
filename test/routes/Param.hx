@@ -10,13 +10,13 @@ class Param implements abe.IRoute {
   }
 
   @:get("/list2/:name")
-  @:args([query, params])
+  @:args(query, params)
   function fromQSAndParam(name : String, page : Int = 1) {
     response.send('$name: $page');
   }
 
   @:post("/list2/")
-  @:args(Body)
+  @:args(body)
   function fromBodyArray(name : String, pages : Array<String>) {
     response.send('$name: $pages');
   }
