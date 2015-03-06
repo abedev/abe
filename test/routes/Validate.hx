@@ -12,4 +12,13 @@ class Validate implements abe.IRoute {
   function getById(id : Int) {
     response.send('$id');
   }
+
+  @:get("/:name/:age")
+  @:validate(null, function (age : Int, req : express.Request, res : express.Response, next : express.Next) {
+    if (age == 9) (next : Void -> Void)();
+    else res.sendStatus(400);
+  })
+  function validateAge(name : String, age : Int) {
+    response.send('$age');
+  }
 }

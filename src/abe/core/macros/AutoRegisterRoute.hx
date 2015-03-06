@@ -87,7 +87,12 @@ class AutoRegisterRoute {
             var name = definition.args[i].name,
                 sources = definition.args[i].sources.map(function(s) return '"$s"').join(", ");
             return 'function (req : express.Request, res : express.Response, next : express.Next) {
-  var v = null;
+  var v = null,
+      f = $val;
+  if (f == null) {
+    (next : Void -> Void)();
+    return;
+  }
   switch abe.core.ArgumentProcessor.getValue("$name", req, [$sources]) {
     case None:
       (next : js.Error -> Void)(new js.Error("argument not found $name"));
@@ -95,7 +100,7 @@ class AutoRegisterRoute {
     case Some(value):
       v = value;
   }
-  ($val)(v, req, res, next); }';
+  f(v, req, res, next); }';
           });
 
           trace(validates);
