@@ -27,7 +27,8 @@ class AutoRegisterRoute {
             metas    = findMetaFromNames(metadata, abe.Methods.list),
             uses     = getUses(metadata),
             errors   = getErrors(metadata),
-            filters  = getFilters(metadata);
+            filters  = getFilters(metadata),
+            validates = getValidations(metadata);
 
         return metas.map(function(meta) {
           return {
@@ -37,7 +38,8 @@ class AutoRegisterRoute {
             method: meta.name.substring(1),
             uses: uses.map(ExprTools.toString),
             errors: errors.map(ExprTools.toString),
-            filters: filters.map(ExprTools.toString)
+            filters: filters.map(ExprTools.toString),
+            validates: validates.map(ExprTools.toString)
           }
         });
       }).flatten();
@@ -80,10 +82,26 @@ class AutoRegisterRoute {
                 sources : [$sources]
               }';
             }).join(", "),
-          emptyArgs = definition.args.map(function(arg) return '${arg.name} : null').join(", ");
+          emptyArgs = definition.args.map(function(arg) return '${arg.name} : null').join(", "),
+          validates = definition.validates.mapi(function(val, i) {
+            var name = definition.args[i].name,
+                sources = definition.args[i].sources.map(function(s) return '"$s"').join(", ");
+            return 'function (req : express.Request, res : express.Response, next : express.Next) {
+  var v = null;
+  switch abe.core.ArgumentProcessor.getValue("$name", req, [$sources]) {
+    case None:
+      (next : js.Error -> Void)(new js.Error("argument not found $name"));
+      return;
+    case Some(value):
+      v = value;
+  }
+  ($val)(v, req, res, next); }';
+          });
+
+          trace(validates);
       exprs.push(Context.parse('var processor = new abe.core.ArgumentProcessor(filters, [${args}])', pos));
       exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)', pos));
-      exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, [${definition.uses.join(", ")}], [${definition.errors.join(", ")}])', pos));
+      exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, [${definition.uses.join(", ")}].concat([${validates.join(", ")}]), [${definition.errors.join(", ")}])', pos));
 
       var params = definition.args.map(function(arg) : Field{
           var kind = complexTypeFromString(arg.type);
@@ -149,6 +167,9 @@ class AutoRegisterRoute {
 
   static function getFilters(meta : Array<MetadataEntry>)
     return getEntries(":filter", meta);
+
+  static function getValidations(meta : Array<MetadataEntry>)
+    return getEntries(":validate", meta);
 
   static function getPrefix(meta : Array<MetadataEntry>, pos) {
     var m = findMeta(meta, ":path");

@@ -15,9 +15,9 @@ class Use implements abe.IRoute {
     response.send(Reflect.field(request, "fun"));
 
   public static function add(key : String, value : String) {
-    return function(req, res, next) {
+    return function(req : express.Request, res : express.Response, next : express.Next) {
       Reflect.setField(req, key, value);
-      next();
+      (next : Void -> Void)();
     };
   }
 }

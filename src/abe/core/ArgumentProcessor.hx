@@ -35,7 +35,7 @@ class ArgumentProcessor<TArgs : {}> {
     );
   }
 
-  static function getValue(name : String, source : { params : {}, query : {}, body : {} }, sources : Array<Source>) {
+  public static function getValue(name : String, source : { params : {}, query : {}, body : {} }, sources : Array<Source>) {
     var o, value;
     for(sourceName in sources) {
       var o = switch sourceName {
