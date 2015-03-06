@@ -1,3 +1,5 @@
+import js.node.http.ClientRequest;
+import js.node.http.ServerResponse;
 import utest.Assert;
 import abe.App;
 import abe.Router;
@@ -22,21 +24,23 @@ class TestCalls {
     server.close();
   }
 
-  function get(path : String, callback : String -> Void)
+  function get(path : String, callback : String -> ServerResponse -> Void)
     request(path, Get, callback);
 
-  function post(path : String, body : {}, callback : String -> Void)
+  function post(path : String, body : {}, callback : String -> ServerResponse -> Void)
     request(path, Post, body, callback);
 
-  function put(path : String, body : {}, callback : String -> Void)
+  function put(path : String, body : {}, callback : String -> ServerResponse -> Void)
     request(path, Put, body, callback);
 
-  function delete(path : String, callback : String -> Void)
+  function delete(path : String, callback : String -> ServerResponse -> Void)
     request(path, Delete, callback);
 
-  function request(path : String, method : Method, ?payload : {}, callback : String -> Void) {
+  function request(path : String, method : Method, ?payload : {}, callback : String -> ServerResponse -> Void) {
     var done = Assert.createAsync(2000);
-    var r = Http.request({
+    var r : ClientRequest = null;
+
+    r = Http.request({
         host : "localhost",
         port : port,
         method : method,
@@ -47,7 +51,8 @@ class TestCalls {
           data += chunk;
         });
         msg.on("end", function() {
-          callback(data);
+          var res : ServerResponse = untyped r.res;
+          callback(data, res);
           done();
         });
       });

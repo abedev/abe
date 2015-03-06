@@ -5,7 +5,7 @@ class TestStatic extends TestCalls {
   public function testFromQS() {
     router.serve("/public/", ".");
 
-    get("/public/haxelib.json", function(msg) {
+    get("/public/haxelib.json", function(msg, _) {
       Assert.notNull(msg);
     });
   }
