@@ -12,7 +12,7 @@ class TestManual extends TestCalls {
     router.registerMethod(path, Get,
       new DynamicRouteProcess(instance, instance.noArgs, new ArgumentProcessor([])));
 
-    request(path, Get, function(msg) {
+    request(path, Get, function(msg, _) {
       Assert.equals("Hello World", msg);
     });
   }
@@ -27,7 +27,7 @@ class TestManual extends TestCalls {
               { name : "s", type : "String", optional : false, sources : [Params] }
             ])));
 
-    get("/manual/withargs/7/false/text", function(msg) {
+    get("/manual/withargs/7/false/text", function(msg, _) {
       Assert.equals('{"i":7,"b":false,"s":"text"}', msg);
     });
   }
@@ -41,11 +41,11 @@ class TestManual extends TestCalls {
               { name : "b", type : "Bool", optional : false, sources : [Params] }
             ])));
 
-    get("/manual/optionalarg/true/?i=9", function(msg) {
+    get("/manual/optionalarg/true/?i=9", function(msg, _) {
       Assert.equals('{"i":9,"b":true}', msg);
     });
 
-    get("/manual/optionalarg/true/", function(msg) {
+    get("/manual/optionalarg/true/", function(msg, _) {
       Assert.equals('{"i":null,"b":true}', msg);
     });
   }
