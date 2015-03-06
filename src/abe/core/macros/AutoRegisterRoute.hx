@@ -103,10 +103,12 @@ class AutoRegisterRoute {
   f(v, req, res, next); }';
           });
 
-          trace(validates);
       exprs.push(Context.parse('var processor = new abe.core.ArgumentProcessor(filters, [${args}])', pos));
       exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)', pos));
-      exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, [${definition.uses.join(", ")}].concat([${validates.join(", ")}]), [${definition.errors.join(", ")}])', pos));
+      exprs.push(Context.parse('var uses : Array<express.Middleware> = []', pos));
+      exprs.push(Context.parse('uses = uses.concat([${definition.uses.join(", ")}])', pos));
+      exprs.push(Context.parse('uses = uses.concat([${validates.join(", ")}])', pos));
+      exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, uses, [${definition.errors.join(", ")}])', pos));
 
       var params = definition.args.map(function(arg) : Field{
           var kind = complexTypeFromString(arg.type);
