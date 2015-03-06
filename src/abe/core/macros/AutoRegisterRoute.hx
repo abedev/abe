@@ -90,12 +90,12 @@ class AutoRegisterRoute {
   var v = null,
       f = $val;
   if (f == null) {
-    (next : Void -> Void)();
+    next.call();
     return;
   }
   switch abe.core.ArgumentProcessor.getValue("$name", req, [$sources]) {
     case None:
-      (next : js.Error -> Void)(new js.Error("argument not found $name"));
+      next.error(new js.Error("argument not found $name"));
       return;
     case Some(value):
       v = value;

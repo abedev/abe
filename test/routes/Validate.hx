@@ -6,7 +6,7 @@ import utest.Assert;
 class Validate implements abe.IRoute {
   @:get("/:id")
   @:validate(function (id : Int, req : express.Request, res : express.Response, next : express.Next) {
-      if (id == 9) (next : Void -> Void)();
+      if (id == 9) next.call();
       else res.sendStatus(400);
     })
   function getById(id : Int) {
@@ -15,7 +15,7 @@ class Validate implements abe.IRoute {
 
   @:get("/:name/:age")
   @:validate(null, function (age : Int, req : express.Request, res : express.Response, next : express.Next) {
-    if (age == 9) (next : Void -> Void)();
+    if (age == 9) next.call();
     else res.sendStatus(400);
   })
   function validateAge(name : String, age : Int) {
