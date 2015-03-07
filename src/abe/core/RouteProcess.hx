@@ -25,7 +25,7 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
           instance.next = next;
           execute();
         case Required(_), InvalidFilter(_):
-          (next : Void -> Void)();
+          next.call();
       }
     });
 

@@ -39,7 +39,7 @@ class AutoRegisterRoute {
             uses: uses.map(ExprTools.toString),
             errors: errors.map(ExprTools.toString),
             filters: filters.map(ExprTools.toString),
-            validates: validates.map(ExprTools.toString)
+            validates: validates.map(generateValidateFunction)
           }
         });
       }).flatten();
@@ -90,12 +90,12 @@ class AutoRegisterRoute {
   var v = null,
       f = $val;
   if (f == null) {
-    (next : Void -> Void)();
+    next.call();
     return;
   }
   switch abe.core.ArgumentProcessor.getValue("$name", req, [$sources]) {
     case None:
-      (next : js.Error -> Void)(new js.Error("argument not found $name"));
+      next.error(new js.Error("argument not found $name"));
       return;
     case Some(value):
       v = value;
@@ -151,6 +151,42 @@ class AutoRegisterRoute {
       $b{exprs}
     )($instance, $router);
     return result;
+  }
+
+  static function generateValidateFunction(f : Expr) {
+    var t = try Context.follow(Context.typeof(f)) catch(e : Dynamic) null;
+    if(null == t) {
+      return 'function(value, req : express.Request, res : express.Response, next : express.Next) {
+  var f = function(_) return ${ExprTools.toString(f)};
+  if(f(value)) {
+    next.call();
+  } else {
+    var err = new js.Error("cannot validate "+value);
+    untyped err.status = 400;
+    next.error(err);
+  }
+}';
+    }
+    return switch t {
+      case TFun(args, TAbstract(ret,_)) if(args.length == 1 && ret.toString() == "Bool"): // straight validate
+        var sf = ExprTools.toString(f);
+        return 'function(value, req : express.Request, res : express.Response, next : express.Next) {
+  var f = $sf;
+  if(f(value)) {
+    next.call();
+  } else {
+    var err = new js.Error("cannot validate "+value);
+    untyped err.status = 400;
+    next.error(err);
+  }
+}';
+      case TFun(args, TAbstract(ret,_)) if(args.length == 4 && ret.toString() == "Void"): // complex validate
+        ExprTools.toString(f);
+      case TMono(v):
+        "null";
+      case s:
+        Context.error('invalid expression @:validate(${ExprTools.toString(f)})', f.pos);
+    }
   }
 
   static function complexTypeFromString(s : String) : ComplexType {
