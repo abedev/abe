@@ -39,7 +39,7 @@ class AutoRegisterRoute {
             uses: uses.map(ExprTools.toString),
             errors: errors.map(ExprTools.toString),
             filters: filters.map(ExprTools.toString),
-            validates: validates.map(ExprTools.toString)
+            validates: validates.map(generateValidateFunction)
           }
         });
       }).flatten();
@@ -151,6 +151,10 @@ class AutoRegisterRoute {
       $b{exprs}
     )($instance, $router);
     return result;
+  }
+
+  static function generateValidateFunction(f : Expr) {
+    return ExprTools.toString(f);
   }
 
   static function complexTypeFromString(s : String) : ComplexType {
