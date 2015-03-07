@@ -154,6 +154,7 @@ class AutoRegisterRoute {
   }
 
   static function generateValidateFunction(f : Expr) {
+    trace(f);
     return ExprTools.toString(f);
   }
 
