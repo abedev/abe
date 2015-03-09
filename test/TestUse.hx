@@ -3,6 +3,7 @@ import utest.Assert;
 class TestUse extends TestCalls {
   public function testUse() {
     router.register(new Use());
+    router.register(new ClassMiddleware());
 
     get("/use/cls", function(msg, _) {
       Assert.equals('CLASS', msg);
@@ -10,6 +11,11 @@ class TestUse extends TestCalls {
 
     get("/use/fun", function(msg, _) {
       Assert.equals('FUNCTION', msg);
+    });
+
+    get("/class-mw/foo", function (msg, res) {
+      Assert.equals(400, res.statusCode);
+      Assert.equals("Foo!", msg);
     });
   }
 }
@@ -31,5 +37,20 @@ class Use implements abe.IRoute {
       Reflect.setField(req, key, value);
       next.call();
     };
+  }
+}
+
+@:path("/class-mw")
+@:use(function (req, res, next) {
+  next();
+})
+@:use(function (req, res, next) {
+  res.status(400).send("Foo!");
+})
+class ClassMiddleware implements abe.IRoute {
+  @:get("/foo")
+  function neverGetHere() {
+    // the class-level middleware should prevent us from ever getting here
+    response.sendStatus(200);
   }
 }
