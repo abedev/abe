@@ -4,6 +4,7 @@ class TestUse extends TestCalls {
   public function testUse() {
     router.register(new Use());
     router.register(new ClassMiddleware());
+    router.register(new ClassMiddleware2());
 
     get("/use/cls", function(msg, _) {
       Assert.equals('CLASS', msg);
@@ -14,6 +15,11 @@ class TestUse extends TestCalls {
     });
 
     get("/class-mw/foo", function (msg, res) {
+      Assert.equals(400, res.statusCode);
+      Assert.equals("Foo!", msg);
+    });
+
+    get("/class-mw2/foo", function (msg, res) {
       Assert.equals(400, res.statusCode);
       Assert.equals("Foo!", msg);
     });
@@ -48,6 +54,18 @@ class Use implements abe.IRoute {
   res.status(400).send("Foo!");
 })
 class ClassMiddleware implements abe.IRoute {
+  @:get("/foo")
+  function neverGetHere() {
+    // the class-level middleware should prevent us from ever getting here
+    response.sendStatus(200);
+  }
+}
+
+@:path("/class-mw2")
+@:use(
+  function (req, res, next) next(),
+  function (req, res, next) res.status(400).send("Foo!"))
+class ClassMiddleware2 implements abe.IRoute {
   @:get("/foo")
   function neverGetHere() {
     // the class-level middleware should prevent us from ever getting here

@@ -196,11 +196,8 @@ class AutoRegisterRoute {
     };
   }
 
-  static function getEntries(name : String, meta : Array<MetadataEntry>) {
-    var m = findMeta(meta, name);
-    if(null == m) return [];
-    return m.params;
-  }
+  static function getEntries(name : String, meta : Array<MetadataEntry>)
+    return findMetas(meta, name).map(function(m) return m.params).flatten();
 
   static function getUses(meta : Array<MetadataEntry>)
     return getEntries(":use", meta);
