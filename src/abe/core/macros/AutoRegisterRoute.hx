@@ -154,8 +154,39 @@ class AutoRegisterRoute {
   }
 
   static function generateValidateFunction(f : Expr) {
-    trace(f);
-    return ExprTools.toString(f);
+    var t = try Context.follow(Context.typeof(f)) catch(e : Dynamic) null;
+    if(null == t) {
+      return 'function(value, req : express.Request, res : express.Response, next : express.Next) {
+  var f = function(_) return ${ExprTools.toString(f)};
+  if(f(value)) {
+    next.call();
+  } else {
+    var err = new js.Error("cannot validate "+value);
+    untyped err.status = 400;
+    next.error(err);
+  }
+}';
+    }
+    return switch t {
+      case TFun(args, TAbstract(ret,_)) if(args.length == 1 && ret.toString() == "Bool"): // straight validate
+        var sf = ExprTools.toString(f);
+        return 'function(value, req : express.Request, res : express.Response, next : express.Next) {
+  var f = $sf;
+  if(f(value)) {
+    next.call();
+  } else {
+    var err = new js.Error("cannot validate "+value);
+    untyped err.status = 400;
+    next.error(err);
+  }
+}';
+      case TFun(args, TAbstract(ret,_)) if(args.length == 4 && ret.toString() == "Void"): // complex validate
+        ExprTools.toString(f);
+      case TMono(v):
+        "null";
+      case s:
+        Context.error('invalid expression @:validate(${ExprTools.toString(f)})', f.pos);
+    }
   }
 
   static function complexTypeFromString(s : String) : ComplexType {
@@ -165,11 +196,8 @@ class AutoRegisterRoute {
     };
   }
 
-  static function getEntries(name : String, meta : Array<MetadataEntry>) {
-    var m = findMeta(meta, name);
-    if(null == m) return [];
-    return m.params;
-  }
+  static function getEntries(name : String, meta : Array<MetadataEntry>)
+    return findMetas(meta, name).map(function(m) return m.params).flatten();
 
   static function getUses(meta : Array<MetadataEntry>)
     return getEntries(":use", meta);
