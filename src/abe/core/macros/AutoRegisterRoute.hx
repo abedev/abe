@@ -31,15 +31,19 @@ class AutoRegisterRoute {
             validates = getValidations(metadata);
 
         return metas.map(function(meta) {
+          var args = getArguments(field);
           return {
             name: field.name,
             path: getMetaAsString(meta, 0),
-            args: getArguments(field),
+            args: args,
             method: meta.name.substring(1),
             uses: uses.map(ExprTools.toString),
             errors: errors.map(ExprTools.toString),
             filters: filters.map(ExprTools.toString),
-            validates: validates.map(generateValidateFunction)
+            validates: validates.mapi(function(validate, i) {
+              var a = args[i];
+              return generateValidateFunction(validate, null != a ? a.type : null);
+            })
           }
         });
       }).flatten();
@@ -86,9 +90,8 @@ class AutoRegisterRoute {
           validates = definition.validates.mapi(function(val, i) {
             var name = definition.args[i].name,
                 sources = definition.args[i].sources.map(function(s) return '"$s"').join(", ");
-            return 'function (req : express.Request, res : express.Response, next : express.Next) {
-  var v = null,
-      f = $val;
+            var f = '\nfunction (req : express.Request, res : express.Response, next : express.Next) {
+  var f = $val;
   if (f == null) {
     next.call();
     return;
@@ -98,9 +101,10 @@ class AutoRegisterRoute {
       next.error(new js.Error("argument not found $name"));
       return;
     case Some(value):
-      v = value;
+      f(value, req, res, next);
   }
-  f(v, req, res, next); }';
+}';
+            return f;
           });
 
       exprs.push(Context.parse('var processor = new abe.core.ArgumentProcessor(filters, [${args}])', pos));
@@ -153,12 +157,12 @@ class AutoRegisterRoute {
     return result;
   }
 
-  static function generateValidateFunction(f : Expr) {
+  static function generateValidateFunction(f : Expr, type) {
     var t = try Context.follow(Context.typeof(f)) catch(e : Dynamic) null;
     if(null == t) {
-      return 'function(value, req : express.Request, res : express.Response, next : express.Next) {
-  var f = function(_) return ${ExprTools.toString(f)};
-  if(f(value)) {
+      return 'function(value : $type, req : express.Request, res : express.Response, next : express.Next) {
+  var fn = function(_ : $type) : Bool return ${ExprTools.toString(f)};
+  if(null == value || fn(value)) {
     next.call();
   } else {
     var err = new js.Error("cannot validate "+value);
@@ -170,9 +174,9 @@ class AutoRegisterRoute {
     return switch t {
       case TFun(args, TAbstract(ret,_)) if(args.length == 1 && ret.toString() == "Bool"): // straight validate
         var sf = ExprTools.toString(f);
-        return 'function(value, req : express.Request, res : express.Response, next : express.Next) {
-  var f = $sf;
-  if(f(value)) {
+        return 'function(value : $type, req : express.Request, res : express.Response, next : express.Next) {
+  var fn = $sf;
+  if(null == value || fn(value)) {
     next.call();
   } else {
     var err = new js.Error("cannot validate "+value);

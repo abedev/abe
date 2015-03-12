@@ -44,6 +44,18 @@ class TestValidate extends TestCalls {
         Assert.equals(400, res.statusCode);
         Assert.notEquals("3", msg);
       });
+
+    get("/validate/quickermixed/9/0/0.6", function (msg, _) {
+        Assert.equals("9 0 0.6", msg);
+      });
+
+    get("/validate/quickermixed/9/1/0.6", function (msg, res) {
+        Assert.equals(400, res.statusCode);
+      });
+
+    get("/validate/quickermixed/9/0/0.5", function (msg, res) {
+        Assert.equals(400, res.statusCode);
+      });
   }
 }
 
@@ -79,6 +91,14 @@ class Validate implements abe.IRoute {
   @:error(Validate.hideError)
   function quickerValidate(id : Int) {
     response.send('$id');
+  }
+
+  // This was failing at compile time
+  @:get("/quickermixed/:id/:zero/:f")
+  @:validate(_ == 9, _ == "0", _ > 0.5)
+  @:error(Validate.hideError)
+  function quickerMixedValidate(id : Int, zero : String, f : Float) {
+    response.send('$id $zero $f');
   }
 
   public static function hideError(err : Error, req : Request, res : Response, next : Next)
