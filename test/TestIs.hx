@@ -27,7 +27,7 @@ class TestIs extends TestCalls {
 
 class Is implements abe.IRoute {
   @:get("/")
-  @:is("html")
+  @:is("html", "text/plain")
   function getHtml() {
     response.send('<html></html>');
   }
