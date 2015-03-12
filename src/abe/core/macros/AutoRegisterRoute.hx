@@ -26,6 +26,7 @@ class AutoRegisterRoute {
         var metadata = field.meta.get(),
             metas    = findMetaFromNames(metadata, abe.Methods.list),
             uses     = getUses(metadata),
+            ises     = getIses(metadata),
             errors   = getErrors(metadata),
             filters  = getFilters(metadata),
             validates = getValidations(metadata);
@@ -38,6 +39,7 @@ class AutoRegisterRoute {
             args: args,
             method: meta.name.substring(1),
             uses: uses.map(ExprTools.toString),
+            ises: ises.map(ExprTools.toString),
             errors: errors.map(ExprTools.toString),
             filters: filters.map(ExprTools.toString),
             validates: validates.mapi(function(validate, i) {
@@ -110,6 +112,15 @@ class AutoRegisterRoute {
       exprs.push(Context.parse('var processor = new abe.core.ArgumentProcessor(filters, [${args}])', pos));
       exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)', pos));
       exprs.push(Context.parse('var uses : Array<express.Middleware> = []', pos));
+      if(definition.ises.length > 0) {
+        var ises = "[" + definition.ises.join(", ") + "]";
+        ises = 'function(req : express.Request, res : express.Response, next : express.Next) {
+            if(req.is($ises))
+              next.call();
+            next.route();
+          }';
+        exprs.push(Context.parse('uses = uses.concat([$ises])', pos));
+      }
       exprs.push(Context.parse('uses = uses.concat([${definition.uses.join(", ")}])', pos));
       exprs.push(Context.parse('uses = uses.concat([${validates.join(", ")}])', pos));
       exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, uses, [${definition.errors.join(", ")}])', pos));
@@ -202,6 +213,9 @@ class AutoRegisterRoute {
 
   static function getEntries(name : String, meta : Array<MetadataEntry>)
     return findMetas(meta, name).map(function(m) return m.params).flatten();
+
+  static function getIses(meta : Array<MetadataEntry>)
+    return getEntries(":is", meta);
 
   static function getUses(meta : Array<MetadataEntry>)
     return getEntries(":use", meta);
