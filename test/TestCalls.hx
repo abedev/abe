@@ -25,7 +25,7 @@ class TestCalls {
   }
 
   function get(path : String, ?headers : {}, callback : String -> IncomingMessage -> Void)
-    request(path, Get, headers, callback);
+    request(path, Get, null, headers, callback);
 
   function post(path : String, body : {}, ?headers : {}, callback : String -> IncomingMessage -> Void)
     request(path, Post, body, headers, callback);
@@ -34,7 +34,7 @@ class TestCalls {
     request(path, Put, body, headers, callback);
 
   function delete(path : String, ?headers : {}, callback : String -> IncomingMessage -> Void)
-    request(path, Delete, headers, callback);
+    request(path, Delete, null, headers, callback);
 
   function request(path : String, method : Method, ?payload : {}, ?headers : {}, callback : String -> IncomingMessage -> Void) {
     var done = Assert.createAsync(2000);
@@ -62,6 +62,8 @@ class TestCalls {
       r.setHeader('Content-Type', 'application/x-www-form-urlencoded');
       r.setHeader('Content-Length', '${b.length}');
       r.write(b);
+    } else {
+      r.setHeader('Transfer-Encoding', 'chunked');
     }
     r.end();
   }
