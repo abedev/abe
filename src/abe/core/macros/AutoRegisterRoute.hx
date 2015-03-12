@@ -121,8 +121,10 @@ class AutoRegisterRoute {
           }';
         exprs.push(Context.parse('uses = uses.concat([$ises])', pos));
       }
-      exprs.push(Context.parse('uses = uses.concat([${definition.uses.join(", ")}])', pos));
-      exprs.push(Context.parse('uses = uses.concat([${validates.join(", ")}])', pos));
+      if(definition.uses.length > 0)
+        exprs.push(Context.parse('uses = uses.concat([${definition.uses.join(", ")}])', pos));
+      if(validates.length > 0)
+        exprs.push(Context.parse('uses = uses.concat([${validates.join(", ")}])', pos));
       exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, uses, [${definition.errors.join(", ")}])', pos));
 
       var params = definition.args.map(function(arg) : Field{
@@ -158,13 +160,14 @@ class AutoRegisterRoute {
       return exprs;
     }).flatten());
 
-  exprs = exprs.concat(errors.map(
-    function(error) return macro router.error($e{error})));
+    exprs = exprs.concat(errors.map(
+      function(error) return macro router.error($e{error})));
 
-  exprs.push(macro return router);
+    exprs.push(macro return router);
     var result = macro (function(instance, parent : abe.Router)
       $b{exprs}
     )($instance, $router);
+    //trace(ExprTools.toString(result));
     return result;
   }
 
