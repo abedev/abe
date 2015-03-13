@@ -4,13 +4,14 @@ using haxe.ds.Option;
 import abe.core.ArgumentProcessing;
 using thx.promise.Future;
 using thx.promise.Promise;
+using thx.core.Strings;
 
 class ArgumentProcessor<TArgs : {}> {
   var requirements : Array<ArgumentRequirement>;
   var filters : ArgumentsFilter;
   public function new(?filters : ArgumentsFilter, requirements : Array<ArgumentRequirement>) {
     this.filters = null != filters ? filters : new ArgumentsFilter();
-    this.requirements = requirements;
+    this.requirements = requirements.map(cleanUpRequirementType);
     this.filters.checkRequirements(requirements);
   }
 
@@ -50,5 +51,16 @@ class ArgumentProcessor<TArgs : {}> {
         return Some(value);
     }
     return None;
+  }
+
+  static function cleanUpRequirementType(requirement : ArgumentRequirement) {
+    var type = requirement.type;
+    // remove spaces
+    type = type.replace(" ", "");
+    // remove wrapping Null
+    if(type.startsWith("Null<"))
+      type = type.substring(5, type.length - 1);
+    requirement.type = type;
+    return requirement;
   }
 }

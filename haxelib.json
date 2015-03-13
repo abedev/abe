@@ -11,6 +11,7 @@
   "dependencies" : {
     "thx.core" : "",
     "hxnodejs" : "",
-    "express" : ""
+    "express" : "",
+    "npm" : ""
   }
 }
