@@ -101,6 +101,18 @@ function handleAllFooTraffic() {
 }
 ```
 
+### use/middleware
+
+You can register [Middleware](http://expressjs.com/guide/using-middleware.html) by using the `@:use` meta at both class or function handler level. In the first case it will apply to all the handlers defined in that class.
+
+```haxe
+@:use(security.Passport.myStrategy)
+@:get("/password/protected/)
+function protectedHandler() { /* ... */}
+```
+
+Middleware can be used for a lot of different cases from protection, to data parsing ...
+
 ### namespaces
 
 Classes can use the `@:path()` meta to create a namespace to nest handler functions.
@@ -122,10 +134,8 @@ nested.register(new OtherRoute());
 
 TODO documentation:
   * class level meta
-    * [ ] @:use
     * [ ] @:filter
     * [ ] @:error
   * handler level meta
-    * [ ] @:use
     * [ ] @:filter
     * [ ] @:error
