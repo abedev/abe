@@ -101,9 +101,27 @@ function handleAllFooTraffic() {
 }
 ```
 
+### namespaces
+
+Classes can use the `@:path()` meta to create a namespace to nest handler functions.
+
+```haxe
+@:path("/base/path/")
+class MyRoute implements IRoute {
+  @:get("/handler/") // the full api end-point is /base/path/handler/
+  function handler() { /* ... */ }
+}
+```
+
+When you register an `IRoute` instance this will return an instance of `Router`. That means that you can nest an entire class inside another class namespace.
+
+```haxe
+var nested = router.register(new MyRoute());
+nested.register(new OtherRoute());
+```
+
 TODO documentation:
   * class level meta
-    * [ ] @:path
     * [ ] @:use
     * [ ] @:filter
     * [ ] @:error
