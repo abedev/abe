@@ -3,6 +3,7 @@
 -lib hxnodejs
 -lib utest
 -lib express
+-lib npm
 -lib jsrequire
 -cp src
 -cp extern

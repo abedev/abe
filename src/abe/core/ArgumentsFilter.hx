@@ -9,18 +9,21 @@ class ArgumentsFilter {
           date   = new DateFilter(),
           float  = new FloatFilter(),
           int    = new IntFilter(),
-          string = new StringFilter();
+          string = new StringFilter(),
+          object = new ObjectFilter();
 
       filters.push(bool);
       filters.push(date);
       filters.push(float);
       filters.push(int);
       filters.push(string);
+      filters.push(object);
       filters.push(new ArrayFilter("Bool", ",", bool));
       filters.push(new ArrayFilter("Date", ",", date));
       filters.push(new ArrayFilter("Float", ",", float));
       filters.push(new ArrayFilter("Int", ",", int));
       filters.push(new ArrayFilter("String", ",", string));
+      filters.push(new ArrayFilter("{}", "|", object));
       return filters;
     })();
 

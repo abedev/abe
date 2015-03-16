@@ -6,11 +6,12 @@
   "tags": ["nodejs", "webserver", "rest"],
   "description": "Easy webserver for Haxe and NodeJS built on top of Express",
   "releasenote": "First release.",
-  "version": "0.0.1",
-  "contributors": ["fponticelli"],
+  "version": "0.8.0",
+  "contributors": ["fponticelli", "mlms13"],
   "dependencies" : {
     "thx.core" : "",
-    "hxnodejs" : "",
-    "express" : ""
+    "express" : "",
+    "npm" : "",
+    "jsrequire" : ""
   }
 }
