@@ -33,6 +33,7 @@ class AutoRegisterRoute {
 
         return metas.map(function(meta) {
           var args = getArguments(field);
+          args = args.slice(0, args.length - 3);
           return {
             name: field.name,
             path: getMetaAsString(meta, 0),
@@ -79,7 +80,8 @@ class AutoRegisterRoute {
       }
       for(filter in definition.filters)
         exprs.push(Context.parse('filters.addFilter($filter)', pos));
-      var args = definition.args.map(function(arg) {
+      var valueArgs = definition.args,
+          args = valueArgs.map(function(arg) {
               var sources = arg.sources.map(function(s) return '"$s"').join(", ");
               return '{
                 name     : "${arg.name}",
@@ -88,10 +90,10 @@ class AutoRegisterRoute {
                 sources : [$sources]
               }';
             }).join(", "),
-          emptyArgs = definition.args.map(function(arg) return '${arg.name} : null').join(", "),
+          emptyArgs = valueArgs.map(function(arg) return '${arg.name} : null').join(", "),
           validates = definition.validates.mapi(function(val, i) {
-            var name = definition.args[i].name,
-                sources = definition.args[i].sources.map(function(s) return '"$s"').join(", ");
+            var name = valueArgs[i].name,
+                sources = valueArgs[i].sources.map(function(s) return '"$s"').join(", ");
             var f = '\nfunction (req : express.Request, res : express.Response, next : express.Next) {
   var f = $val;
   if (f == null) {
@@ -167,7 +169,6 @@ class AutoRegisterRoute {
     var result = macro (function(instance, parent : abe.Router)
       $b{exprs}
     )($instance, $router);
-    //trace(ExprTools.toString(result));
     return result;
   }
 
@@ -276,9 +277,16 @@ class AutoRegisterRoute {
   static function createProcessFields(name : String, args : Array<ArgumentRequirement>) {
     var args = args.map(function(arg) {
             return 'args.${arg.name}';
-          }).join(", "),
+          }).concat(["request", "response", "next"]).join(", "),
         execute = 'instance.$name($args)';
-    return [createFunctionField("execute", [AOverride], Context.parse(execute, Context.currentPos()))];
+    return [createFunctionField("execute",
+      [AOverride],
+      [
+        { name : "request", type : macro : express.Request, value : null, opt : false },
+        { name : "response", type : macro : express.Response, value : null, opt : false },
+        { name : "next", type : macro : express.Next, value : null, opt : false }
+      ],
+      Context.parse(execute, Context.currentPos()))];
   }
 
   static function getArguments(field : ClassField) : Array<ArgumentRequirement> {
