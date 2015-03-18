@@ -52,18 +52,18 @@ class TestManual extends TestCalls {
 }
 
 class Manual implements abe.IRoute {
-  public function noArgs() {
+  public function noArgs(request, response, next) {
     response.send("Hello World");
   }
 
-  public function withArgs(i : Int, b : Bool, s : String) {
+  public function withArgs(i : Int, b : Bool, s : String, request, response, next) {
     Assert.is(i, Int);
     Assert.is(b, Bool);
     Assert.is(s, String);
     response.send({ i : i, b : b, s : s });
   }
 
-  public function withOptionalArg(?i : Int, b : Bool) {
+  public function withOptionalArg(?i : Int, b : Bool, request, response, next) {
     if(null != i)
       Assert.is(i, Int);
     Assert.is(b, Bool);
