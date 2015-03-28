@@ -1,11 +1,9 @@
 # abe
-
 [![Join the chat at https://gitter.im/abedev/abe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/abedev/abe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Build REST apis with Haxe and nodejs.
 
-### Setup
-
+## Setup
 Create a new instance of a `abe.App`, which listens for http traffic on a port of your choice:
 
 ```haxe
@@ -30,8 +28,7 @@ class RouteHandler implements abe.IRoute {
 }
 ```
 
-### Routes
-
+## Routes
 abe makes super-easy getting typed parameters from user requests:
 
 ```haxe
@@ -45,8 +42,7 @@ In this case `getUser` is only invoked if `:id` is present and it is an integer 
 
 By default arguments are taken from `params` (the route path) but with the `@:args()` meta you can take the arguments from: `query`, `body`, `params` or `request`. @:args can also take an array of sources when multiple sources are desired. Sources can be specified as either identifiers (no quotes) or strings.
 
-#### Basic HTTP Methods
-
+### Basic HTTP Methods
 The example above used `@:get` to tell the function below to handle GET requests on the `/` route. In addition to `get`, you can use [a variety of other HTTP methods](http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html).
 
 ```haxe
@@ -56,8 +52,7 @@ function deleteUser(id : Int) {
 }
 ```
 
-#### HEAD and OPTIONS
-
+### HEAD and OPTIONS
 Out of the box, `HEAD` requests will return headers for any route you specify, and `OPTIONS /some/path` will return a list of methods that are accepted by the path `/some/path`. This happens without the need to manually specify `@:head` and `@:options`.
 
 However, do note that making a `HEAD` request to a URL will run the `@:get` handler function, even though only the headers are returned. If you have an expensive function handling `GET` requests, you may wish to specify a separate `@:head` handler like so:
@@ -69,8 +64,7 @@ function getUserHead () {
 }
 ```
 
-#### Multiple Routes, One Handler
-
+### Multiple Routes, One Handler
 You can use a single route to handle a variety of types of requests (to a variety of paths, if you choose).
 
 ```haxe
@@ -101,41 +95,44 @@ function handleAllFooTraffic() {
 }
 ```
 
-### use/middleware
-
-You can register [Middleware](http://expressjs.com/guide/using-middleware.html) by using the `@:use` meta at both class or function handler level. In the first case it will apply to all the handlers defined in that class.
-
-```haxe
-@:use(security.Passport.myStrategy)
-@:get("/password/protected/)
-function protectedHandler() { /* ... */}
-```
-
-Middleware can be used for a lot of different cases from protection, to data parsing ...
-
-### namespaces
-
-Classes can use the `@:path()` meta to create a namespace to nest handler functions.
+### @:path
+You can set a base path for your handlers by adding the `@:path()` to your class.
 
 ```haxe
-@:path("/base/path/")
-class MyRoute implements IRoute {
-  @:get("/handler/") // the full api end-point is /base/path/handler/
-  function handler() { /* ... */ }
+@:path("/some/")
+class SomeRoute implements IRoute {
+  @:get("/endpoint/")
+  function getEndpoint() {
+    // do something
+  }
 }
 ```
 
-When you register an `IRoute` instance this will return an instance of `Router`. That means that you can nest an entire class inside another class namespace.
+The handler `getEndpoint` responds to calls made at path `/some/endpoint/`.
+
+### @:use
+One of the most powerful features of Express is to be able to use [middlewares](http://expressjs.com/guide/using-middleware.html). _abe_ makes using middleware super easy to use either at the handler level (methods), class level (router) or application level (`abe.App`).
+
+In the first two cases you can just apply the `@:use` metadata with a reference to a static method satisfies the `express.Middleware` signature.
 
 ```haxe
-var nested = router.register(new MyRoute());
-nested.register(new OtherRoute());
+@:use(express.mw.BodyParser.json())
+```
+
+The metadata makes very easy to apply Middleware to just very specific handlers. You should take advantage of that feature instead of blindly apply Middleware globally. Still in case you want to do that you can apply the Middleware to the entire app or router.
+
+```haxe
+var app = new abe.App();
+app.use(express.mw.BodyParser.json());
 ```
 
 TODO documentation:
-  * class level meta
-    * [ ] @:filter
-    * [ ] @:error
-  * handler level meta
-    * [ ] @:filter
-    * [ ] @:error
+- class level meta
+  - [ ] @:validate
+  - [ ] @:filter
+  - [ ] @:error
+
+- handler level meta
+  - [ ] @:validate
+  - [ ] @:filter
+  - [ ] @:error
