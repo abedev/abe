@@ -85,6 +85,14 @@ class Macros {
     return null;
   }
 
+  public static function findMetas(meta : Array<MetadataEntry>, name : String) : Array<MetadataEntry> {
+    var results = [];
+    for(m in meta)
+      if(m.name == name)
+        results.push(m);
+    return results;
+  }
+
   public static function hasMeta(meta : Array<MetadataEntry>, name : String)
     return findMeta(meta, name) != null;
 

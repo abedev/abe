@@ -10,10 +10,10 @@ class DynamicRouteProcess extends RouteProcess<IRoute, {}> {
     this.method = method;
   }
 
-  override function execute() {
+  override function execute(req : express.Request, res : express.Response, next : express.Next) {
     var list = Reflect.fields(args);
     Reflect.callMethod(null, method, list.map(function(arg) {
       return Reflect.field(args, arg);
-    }));
+    }).concat(([req, res, next] : Array<Dynamic>)));
   }
 }

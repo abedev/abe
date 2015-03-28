@@ -3,15 +3,14 @@ package abe.core.macros;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import abe.core.macros.Macros.*;
+using thx.core.Iterables;
 
 class BuildIRoute {
   macro public static function complete() : Array<Field> {
     var fields = Context.getBuildFields();
     injectConstructor(fields);
     injectToString(fields);
-    injectRequest(fields);
-    injectResponse(fields);
-    injectNext(fields);
+    patchMethods(fields);
     makeControllerFunctionsPublic(fields);
     return fields;
   }
@@ -27,26 +26,41 @@ class BuildIRoute {
     fields.push(createFunctionField("toString", macro : String, macro return $v{cls}));
   }
 
-  static function injectRequest(fields : Array<Field>) {
-    if(hasField(fields, "request")) return;
-    fields.push(createVarField("request", macro : express.Request));
-  }
-
-  static function injectResponse(fields : Array<Field>) {
-    if(hasField(fields, "response")) return;
-    fields.push(createVarField("response", macro : express.Response));
-  }
-
-  static function injectNext(fields : Array<Field>) {
-    if(hasField(fields, "next")) return;
-    fields.push(createVarField("next", macro : express.Next));
-  }
-
   static function makeControllerFunctionsPublic(fields : Array<Field>) {
     for(field in fields) {
       for (method in abe.Methods.list)
         if(hasMeta(field.meta, ":" + method))
           makeFieldPublic(field);
     }
+  }
+
+  static function patchMethods(fields : Array<Field>) {
+    var fields = filterControllerMethods(fields);
+    for(field in fields) {
+      switch field.kind {
+        case FFun(f): f.args = f.args.concat([
+            { name : "request", type : macro : express.Request, value : null, opt : false },
+            { name : "response", type : macro : express.Response, value : null, opt : false },
+            { name : "next", type : macro : express.Next, value : null, opt : false }
+          ]);
+        case _: continue;
+      }
+    }
+  }
+
+  static function filterControllerMethods(fields : Array<Field>) {
+    var results = [];
+    for(field in fields) {
+      if(null == field.meta) continue;
+      for(meta in field.meta) {
+        var find = meta.name.substring(1);
+        if (!abe.Methods.list.any(function (method) return method == find)) {
+          continue;
+        }
+        results.push(field);
+        break;
+      }
+    }
+    return results;
   }
 }

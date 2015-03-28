@@ -26,20 +26,27 @@ class AutoRegisterRoute {
         var metadata = field.meta.get(),
             metas    = findMetaFromNames(metadata, abe.Methods.list),
             uses     = getUses(metadata),
+            ises     = getIses(metadata),
             errors   = getErrors(metadata),
             filters  = getFilters(metadata),
             validates = getValidations(metadata);
 
         return metas.map(function(meta) {
+          var args = getArguments(field);
+          args = args.slice(0, args.length - 3);
           return {
             name: field.name,
             path: getMetaAsString(meta, 0),
-            args: getArguments(field),
+            args: args,
             method: meta.name.substring(1),
             uses: uses.map(ExprTools.toString),
+            ises: ises.map(ExprTools.toString),
             errors: errors.map(ExprTools.toString),
             filters: filters.map(ExprTools.toString),
-            validates: validates.map(generateValidateFunction)
+            validates: validates.mapi(function(validate, i) {
+              var a = args[i];
+              return generateValidateFunction(validate, null != a ? a.type : null);
+            })
           }
         });
       }).flatten();
@@ -73,7 +80,8 @@ class AutoRegisterRoute {
       }
       for(filter in definition.filters)
         exprs.push(Context.parse('filters.addFilter($filter)', pos));
-      var args = definition.args.map(function(arg) {
+      var valueArgs = definition.args,
+          args = valueArgs.map(function(arg) {
               var sources = arg.sources.map(function(s) return '"$s"').join(", ");
               return '{
                 name     : "${arg.name}",
@@ -82,13 +90,12 @@ class AutoRegisterRoute {
                 sources : [$sources]
               }';
             }).join(", "),
-          emptyArgs = definition.args.map(function(arg) return '${arg.name} : null').join(", "),
+          emptyArgs = valueArgs.map(function(arg) return '${arg.name} : null').join(", "),
           validates = definition.validates.mapi(function(val, i) {
-            var name = definition.args[i].name,
-                sources = definition.args[i].sources.map(function(s) return '"$s"').join(", ");
-            return 'function (req : express.Request, res : express.Response, next : express.Next) {
-  var v = null,
-      f = $val;
+            var name = valueArgs[i].name,
+                sources = valueArgs[i].sources.map(function(s) return '"$s"').join(", ");
+            var f = '\nfunction (req : express.Request, res : express.Response, next : express.Next) {
+  var f = $val;
   if (f == null) {
     next.call();
     return;
@@ -98,16 +105,28 @@ class AutoRegisterRoute {
       next.error(new js.Error("argument not found $name"));
       return;
     case Some(value):
-      v = value;
+      f(value, req, res, next);
   }
-  f(v, req, res, next); }';
+}';
+            return f;
           });
 
       exprs.push(Context.parse('var processor = new abe.core.ArgumentProcessor(filters, [${args}])', pos));
       exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)', pos));
       exprs.push(Context.parse('var uses : Array<express.Middleware> = []', pos));
-      exprs.push(Context.parse('uses = uses.concat([${definition.uses.join(", ")}])', pos));
-      exprs.push(Context.parse('uses = uses.concat([${validates.join(", ")}])', pos));
+      if(definition.ises.length > 0) {
+        var ises = "[" + definition.ises.join(", ") + "]";
+        ises = 'function(req : express.Request, res : express.Response, next : express.Next) {
+            if(req.is($ises))
+              next.call();
+            next.route();
+          }';
+        exprs.push(Context.parse('uses = uses.concat([$ises])', pos));
+      }
+      if(definition.uses.length > 0)
+        exprs.push(Context.parse('uses = uses.concat([${definition.uses.join(", ")}])', pos));
+      if(validates.length > 0)
+        exprs.push(Context.parse('uses = uses.concat([${validates.join(", ")}])', pos));
       exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, uses, [${definition.errors.join(", ")}])', pos));
 
       var params = definition.args.map(function(arg) : Field{
@@ -143,22 +162,22 @@ class AutoRegisterRoute {
       return exprs;
     }).flatten());
 
-  exprs = exprs.concat(errors.map(
-    function(error) return macro router.error($e{error})));
+    exprs = exprs.concat(errors.map(
+      function(error) return macro router.error($e{error})));
 
-  exprs.push(macro return router);
+    exprs.push(macro return router);
     var result = macro (function(instance, parent : abe.Router)
       $b{exprs}
     )($instance, $router);
     return result;
   }
 
-  static function generateValidateFunction(f : Expr) {
+  static function generateValidateFunction(f : Expr, type) {
     var t = try Context.follow(Context.typeof(f)) catch(e : Dynamic) null;
     if(null == t) {
-      return 'function(value, req : express.Request, res : express.Response, next : express.Next) {
-  var f = function(_) return ${ExprTools.toString(f)};
-  if(f(value)) {
+      return 'function(value : $type, req : express.Request, res : express.Response, next : express.Next) {
+  var fn = function(_ : $type) : Bool return ${ExprTools.toString(f)};
+  if(null == value || fn(value)) {
     next.call();
   } else {
     var err = new js.Error("cannot validate "+value);
@@ -170,9 +189,9 @@ class AutoRegisterRoute {
     return switch t {
       case TFun(args, TAbstract(ret,_)) if(args.length == 1 && ret.toString() == "Bool"): // straight validate
         var sf = ExprTools.toString(f);
-        return 'function(value, req : express.Request, res : express.Response, next : express.Next) {
-  var f = $sf;
-  if(f(value)) {
+        return 'function(value : $type, req : express.Request, res : express.Response, next : express.Next) {
+  var fn = $sf;
+  if(null == value || fn(value)) {
     next.call();
   } else {
     var err = new js.Error("cannot validate "+value);
@@ -196,11 +215,11 @@ class AutoRegisterRoute {
     };
   }
 
-  static function getEntries(name : String, meta : Array<MetadataEntry>) {
-    var m = findMeta(meta, name);
-    if(null == m) return [];
-    return m.params;
-  }
+  static function getEntries(name : String, meta : Array<MetadataEntry>)
+    return findMetas(meta, name).map(function(m) return m.params).flatten();
+
+  static function getIses(meta : Array<MetadataEntry>)
+    return getEntries(":is", meta);
 
   static function getUses(meta : Array<MetadataEntry>)
     return getEntries(":use", meta);
@@ -258,9 +277,16 @@ class AutoRegisterRoute {
   static function createProcessFields(name : String, args : Array<ArgumentRequirement>) {
     var args = args.map(function(arg) {
             return 'args.${arg.name}';
-          }).join(", "),
+          }).concat(["request", "response", "next"]).join(", "),
         execute = 'instance.$name($args)';
-    return [createFunctionField("execute", [AOverride], Context.parse(execute, Context.currentPos()))];
+    return [createFunctionField("execute",
+      [AOverride],
+      [
+        { name : "request", type : macro : express.Request, value : null, opt : false },
+        { name : "response", type : macro : express.Response, value : null, opt : false },
+        { name : "next", type : macro : express.Next, value : null, opt : false }
+      ],
+      Context.parse(execute, Context.currentPos()))];
   }
 
   static function getArguments(field : ClassField) : Array<ArgumentRequirement> {

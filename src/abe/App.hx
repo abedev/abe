@@ -48,8 +48,10 @@ class App {
     return server;
   }
 #end
-  macro public static function installNpmDependencies() {
-    jsrequire.JSRequire.installNpmDependencies(true);
+  macro public static function installNpmDependencies(?createPackageJson : Bool) {
+    if(null == createPackageJson)
+      createPackageJson = true;
+    jsrequire.JSRequire.installNpmDependencies(createPackageJson);
     return macro null;
   }
 }

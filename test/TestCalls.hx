@@ -1,5 +1,5 @@
 import js.node.http.ClientRequest;
-import js.node.http.ServerResponse;
+import js.node.http.IncomingMessage;
 import utest.Assert;
 import abe.App;
 import abe.Router;
@@ -24,19 +24,19 @@ class TestCalls {
     server.close();
   }
 
-  function get(path : String, callback : String -> ServerResponse -> Void)
-    request(path, Get, callback);
+  function get(path : String, ?headers : {}, callback : String -> IncomingMessage -> Void)
+    request(path, Get, null, headers, callback);
 
-  function post(path : String, body : {}, callback : String -> ServerResponse -> Void)
-    request(path, Post, body, callback);
+  function post(path : String, body : {}, ?headers : {}, callback : String -> IncomingMessage -> Void)
+    request(path, Post, body, headers, callback);
 
-  function put(path : String, body : {}, callback : String -> ServerResponse -> Void)
-    request(path, Put, body, callback);
+  function put(path : String, body : {}, ?headers : {}, callback : String -> IncomingMessage -> Void)
+    request(path, Put, body, headers, callback);
 
-  function delete(path : String, callback : String -> ServerResponse -> Void)
-    request(path, Delete, callback);
+  function delete(path : String, ?headers : {}, callback : String -> IncomingMessage -> Void)
+    request(path, Delete, null, headers, callback);
 
-  function request(path : String, method : Method, ?payload : {}, callback : String -> ServerResponse -> Void) {
+  function request(path : String, method : Method, ?payload : {}, ?headers : {}, callback : String -> IncomingMessage -> Void) {
     var done = Assert.createAsync(2000);
     var r : ClientRequest = null;
 
@@ -44,15 +44,15 @@ class TestCalls {
         host : "localhost",
         port : port,
         method : method,
-        path : path
+        path : path,
+        headers : headers
       }, function(msg : IncomingMessage) {
         var data = "";
         msg.on("data", function(chunk) {
           data += chunk;
         });
         msg.on("end", function() {
-          var res : ServerResponse = untyped r.res;
-          callback(data, res);
+          callback(data, msg);
           done();
         });
       });
@@ -62,6 +62,8 @@ class TestCalls {
       r.setHeader('Content-Type', 'application/x-www-form-urlencoded');
       r.setHeader('Content-Length', '${b.length}');
       r.write(b);
+    } else {
+      r.setHeader('Transfer-Encoding', 'chunked');
     }
     r.end();
   }

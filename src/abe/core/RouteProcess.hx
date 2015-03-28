@@ -20,10 +20,7 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
     argumentProcessor.processArguments(req, args).then(function(result) {
       switch result {
         case Ok:
-          instance.request = req;
-          instance.response = res;
-          instance.next = next;
-          execute();
+          execute(req, res, next);
         case Required(_), InvalidFilter(_):
           next.call();
       }
@@ -31,6 +28,6 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
 
   }
 
-  function execute()
+  function execute(req : Request, res : Response, next : Next)
     throw 'RouteProcess.execute() must be overwritten';
 }
