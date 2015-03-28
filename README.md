@@ -1,11 +1,9 @@
 # abe
-
 [![Join the chat at https://gitter.im/abedev/abe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/abedev/abe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Build REST apis with Haxe and nodejs.
 
-### Setup
-
+## Setup
 Create a new instance of a `abe.App`, which listens for http traffic on a port of your choice:
 
 ```haxe
@@ -30,8 +28,7 @@ class RouteHandler implements abe.IRoute {
 }
 ```
 
-### Routes
-
+## Routes
 abe makes super-easy getting typed parameters from user requests:
 
 ```haxe
@@ -45,8 +42,7 @@ In this case `getUser` is only invoked if `:id` is present and it is an integer 
 
 By default arguments are taken from `params` (the route path) but with the `@:args()` meta you can take the arguments from: `query`, `body`, `params` or `request`. @:args can also take an array of sources when multiple sources are desired. Sources can be specified as either identifiers (no quotes) or strings.
 
-#### Basic HTTP Methods
-
+### Basic HTTP Methods
 The example above used `@:get` to tell the function below to handle GET requests on the `/` route. In addition to `get`, you can use [a variety of other HTTP methods](http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html).
 
 ```haxe
@@ -56,8 +52,7 @@ function deleteUser(id : Int) {
 }
 ```
 
-#### HEAD and OPTIONS
-
+### HEAD and OPTIONS
 Out of the box, `HEAD` requests will return headers for any route you specify, and `OPTIONS /some/path` will return a list of methods that are accepted by the path `/some/path`. This happens without the need to manually specify `@:head` and `@:options`.
 
 However, do note that making a `HEAD` request to a URL will run the `@:get` handler function, even though only the headers are returned. If you have an expensive function handling `GET` requests, you may wish to specify a separate `@:head` handler like so:
@@ -69,8 +64,7 @@ function getUserHead () {
 }
 ```
 
-#### Multiple Routes, One Handler
-
+### Multiple Routes, One Handler
 You can use a single route to handle a variety of types of requests (to a variety of paths, if you choose).
 
 ```haxe
@@ -101,13 +95,28 @@ function handleAllFooTraffic() {
 }
 ```
 
+### @:path
+You can set a base path for your handlers by adding the `@:path()` to your class.
+
+```haxe
+@:path("/some/")
+class SomeRoute implements IRoute {
+  @:get("/endpoint/")
+  function getEndpoint() {
+    // do something
+  }
+}
+```
+
+The handler `getEndpoint` responds to calls made at path `/some/endpoint/`.
+
 TODO documentation:
-  * class level meta
-    * [ ] @:path
-    * [ ] @:use
-    * [ ] @:filter
-    * [ ] @:error
-  * handler level meta
-    * [ ] @:use
-    * [ ] @:filter
-    * [ ] @:error
+- class level meta
+  - [ ] @:use
+  - [ ] @:filter
+  - [ ] @:error
+
+- handler level meta
+  - [ ] @:use
+  - [ ] @:filter
+  - [ ] @:error
