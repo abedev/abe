@@ -128,11 +128,11 @@ app.use(express.mw.BodyParser.json());
 
 TODO documentation:
 - class level meta
-  - [ ] @:use
+  - [ ] @:validate
   - [ ] @:filter
   - [ ] @:error
 
 - handler level meta
-  - [ ] @:use
+  - [ ] @:validate
   - [ ] @:filter
   - [ ] @:error
