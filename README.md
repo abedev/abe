@@ -110,6 +110,22 @@ class SomeRoute implements IRoute {
 
 The handler `getEndpoint` responds to calls made at path `/some/endpoint/`.
 
+### @:use
+One of the most powerful features of Express is to be able to use [middlewares](http://expressjs.com/guide/using-middleware.html). _abe_ makes using middleware super easy to use either at the handler level (methods), class level (router) or application level (`abe.App`).
+
+In the first two cases you can just apply the `@:use` metadata with a reference to a static method satisfies the `express.Middleware` signature.
+
+```haxe
+@:use(express.mw.BodyParser.json())
+```
+
+The metadata makes very easy to apply Middleware to just very specific handlers. You should take advantage of that feature instead of blindly apply Middleware globally. Still in case you want to do that you can apply the Middleware to the entire app or router.
+
+```haxe
+var app = new abe.App();
+app.use(express.mw.BodyParser.json());
+```
+
 TODO documentation:
 - class level meta
   - [ ] @:use
