@@ -1,7 +1,7 @@
 package abe.core.filters;
 
 import thx.promise.Promise;
-import thx.core.Error;
+import thx.Error;
 
 class ArrayFilter<T> implements IFilterArgument<Array<T>> {
   var delimiter : String;

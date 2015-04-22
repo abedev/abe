@@ -6,9 +6,9 @@ import haxe.macro.Context;
 import haxe.macro.Expr;
 using haxe.macro.TypeTools;
 import abe.core.macros.Macros.*;
-using thx.core.Iterables;
-using thx.core.Arrays;
-using thx.core.Strings;
+using thx.Iterables;
+using thx.Arrays;
+using thx.Strings;
 
 class AutoRegisterRoute {
   public static function register(router : Expr, instance : Expr) : Expr {

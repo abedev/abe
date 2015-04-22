@@ -1,7 +1,7 @@
 package abe.core.filters;
 
-import thx.core.Floats;
-import thx.core.Error;
+import thx.Floats;
+import thx.Error;
 import thx.promise.Promise;
 
 class DateFilter implements IFilterArgument<Date> {

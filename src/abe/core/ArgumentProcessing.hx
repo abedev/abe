@@ -1,6 +1,6 @@
 package abe.core;
 
-import thx.core.Error;
+import thx.Error;
 
 enum ArgumentProcessing {
   Ok;

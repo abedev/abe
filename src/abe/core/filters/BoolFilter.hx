@@ -1,7 +1,7 @@
 package abe.core.filters;
 
-import thx.core.Bools;
-import thx.core.Error;
+import thx.Bools;
+import thx.Error;
 import thx.promise.Promise;
 
 class BoolFilter implements IFilterArgument<Bool> {

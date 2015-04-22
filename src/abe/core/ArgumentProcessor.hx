@@ -4,7 +4,7 @@ using haxe.ds.Option;
 import abe.core.ArgumentProcessing;
 using thx.promise.Future;
 using thx.promise.Promise;
-using thx.core.Strings;
+using thx.Strings;
 
 class ArgumentProcessor<TArgs : {}> {
   var requirements : Array<ArgumentRequirement>;
