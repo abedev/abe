@@ -6,7 +6,7 @@ import js.node.Http;
 import js.node.Https;
 import js.node.Tls.TlsServerOptions;
 import express.Express;
-using thx.core.Nulls;
+using thx.Nulls;
 #end
 
 class App {

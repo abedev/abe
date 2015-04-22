@@ -1,7 +1,7 @@
 package abe.core.filters;
 
-import thx.core.Ints;
-import thx.core.Error;
+import thx.Ints;
+import thx.Error;
 import thx.promise.Promise;
 
 class IntFilter implements IFilterArgument<Int> {

@@ -1,8 +1,8 @@
 package abe.core.filters;
 
 import haxe.Json;
-import thx.core.Objects;
-import thx.core.Error;
+import thx.Objects;
+import thx.Error;
 import thx.promise.Promise;
 
 class ObjectFilter implements IFilterArgument<{}> {

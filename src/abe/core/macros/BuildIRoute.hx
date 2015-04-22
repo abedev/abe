@@ -3,7 +3,7 @@ package abe.core.macros;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 import abe.core.macros.Macros.*;
-using thx.core.Iterables;
+using thx.Iterables;
 
 class BuildIRoute {
   macro public static function complete() : Array<Field> {
