@@ -5,8 +5,8 @@
   "classPath": "src",
   "tags": ["nodejs", "webserver", "rest"],
   "description": "Easy webserver for Haxe and NodeJS built on top of Express",
-  "releasenote": "First release.",
-  "version": "0.8.0",
+  "releasenote": "More argument filters, fixed important concurrency issue, updated package for thx.core.",
+  "version": "0.9.0",
   "contributors": ["fponticelli", "mlms13"],
   "dependencies" : {
     "thx.core" : "",
