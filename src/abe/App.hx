@@ -6,7 +6,6 @@ import js.node.Http;
 import js.node.Https;
 import js.node.Tls.TlsServerOptions;
 import express.Express;
-using thx.Nulls;
 #end
 
 class App {
@@ -15,7 +14,7 @@ class App {
   public var express(default, null) : Express;
 
   public function new(?options : Options) {
-    options = options.or({});
+    options = null != options ? options : {};
     express = new Express();
 
     if(options.strictRoute)
