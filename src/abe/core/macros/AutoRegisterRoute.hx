@@ -33,7 +33,6 @@ class AutoRegisterRoute {
 
         return metas.map(function(meta) {
           var args = getArguments(field);
-          args = args.slice(0, args.length - 3);
           return {
             name: field.name,
             path: getMetaAsString(meta, 0),
@@ -292,7 +291,7 @@ class AutoRegisterRoute {
   static function getArguments(field : ClassField) : Array<ArgumentRequirement> {
     return switch Context.follow(field.type) {
       case TFun(args, _):
-        args.map(function(arg) {
+        args.slice(0, args.length - 3).map(function(arg) {
           return {
               name : arg.name,
               optional : arg.opt,
