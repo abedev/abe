@@ -16,6 +16,27 @@ class TestParam extends TestCalls {
     get("/list2/some/?page=2", function(msg, _) {
       Assert.equals('some: 2', msg);
     });
+
+    // restrict param source
+    get("/get/123?partial=true&id=456", function(msg, res) {
+      if(res.statusCode != 200) {
+        Assert.fail(msg);
+      } else {
+        Assert.same({ partial : true, id : 123 }, haxe.Json.parse(msg));
+      }
+    });
+
+    post("/post/?a=A&b=B&c=C", {a:"a",b:"b",c:"c"}, function(msg : String, res) {
+      if(res.statusCode != 200) {
+        Assert.fail(msg);
+      } else {
+        Assert.same({
+          a : "A",
+          b : "B",
+          c : "c"
+        }, haxe.Json.parse(msg));
+      }
+    });
   }
 }
 
@@ -36,5 +57,21 @@ class Param implements abe.IRoute {
   @:args(body)
   function fromBodyArray(name : String, pages : Array<String>) {
     response.send('$name: $pages');
+  }
+
+  @:get("/get/:id")
+  @:args(query(partial), params(id))
+  function restrict(id : Int, partial : Bool) {
+    response.send({
+      id : id,
+      partial : partial
+    });
+  }
+
+  @:post("/post/")
+  @:use(mw.BodyParser.urlencoded({ extended : false }))
+  @:args(query(a,b), body(c))
+  function restrictQuery(a : String, b : String, c : String) {
+    response.send({ a : a, b : b, c : c });
   }
 }
