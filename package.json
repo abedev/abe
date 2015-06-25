@@ -13,7 +13,7 @@
   "author": "Franco Ponticelli <franco.ponticelli@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.12.2",
-    "qs": "^2.4.0"
+    "body-parser": "^1.13.1",
+    "express": "^4.12.2"
   }
 }

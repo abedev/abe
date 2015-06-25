@@ -25,7 +25,6 @@ class RouteProcess<TRoute : IRoute, TArgs : {}> {
           next.call();
       }
     });
-
   }
 
   function execute(req : Request, res : Response, next : Next)

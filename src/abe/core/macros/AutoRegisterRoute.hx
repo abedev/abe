@@ -33,7 +33,6 @@ class AutoRegisterRoute {
 
         return metas.map(function(meta) {
           var args = getArguments(field);
-          args = args.slice(0, args.length - 3);
           return {
             name: field.name,
             path: getMetaAsString(meta, 0),
@@ -292,30 +291,39 @@ class AutoRegisterRoute {
   static function getArguments(field : ClassField) : Array<ArgumentRequirement> {
     return switch Context.follow(field.type) {
       case TFun(args, _):
-        args.map(function(arg) {
+        args.slice(0, args.length - 3).map(function(arg) {
           return {
-              name : arg.name,
-              optional : arg.opt,
-              type : arg.t.toString(),
-              sources : getSources(field)
+            name : arg.name,
+            optional : arg.opt,
+            type : arg.t.toString(),
+            sources : getSources(field, arg.name)
           };
         });
       case _: [];
     };
   }
 
-  static function getSources(field : ClassField) {
+  static function getSources(field : ClassField, argName : String) {
     var meta = findMeta(field.meta.get(), ":args");
     if(null == meta)
       return ["params"];
     var sources = meta.params.map(function(p) return switch p.expr {
-      case EConst(CIdent(id)), EConst(CString(id)):
+      case EConst(CIdent(id)), EConst(CString(id)),
+           ECall({ expr : EConst(CIdent(id)), pos : _ }, []):
         [id.toLowerCase()];
       case EArrayDecl(arr): arr.map(function(p) return switch p.expr {
           case EConst(CIdent(id)): id.toLowerCase();
           case _: Context.error("parameter for query should be an identifier or an array of identifiers", field.pos);
         });
-      case _:
+      case ECall({ expr : EConst(CIdent(source)), pos : _ }, args):
+        args.filter(function(arg) {
+          return switch arg.expr {
+            case EConst(CIdent(argId)) if(argId == argName): true;
+            case _: false;
+          };
+        }).map(function(_) return source.toLowerCase());
+      case other:
+        trace(other);
         Context.error("parameter for query should be an identifier or an array of identifiers", field.pos);
     }).flatten();
     sources.map(function(source : Source) switch source {
