@@ -21,7 +21,6 @@ class ObjectFilter implements IFilterArgument<{}> {
         return Promise.value(v);
       return Promise.error(new Error('"$value" cannot be transformed to an Object value'));
     }
-
     return Promise.error(new Error('"$value" is not an Object value'));
   }
 }
