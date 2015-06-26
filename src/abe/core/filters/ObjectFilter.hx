@@ -16,7 +16,7 @@ class ObjectFilter implements IFilterArgument<{}> {
       var v = try Json.parse(value) catch(e : Dynamic) null;
       if(null != v)
         return Promise.value(v);
-      v = try thx.QueryString.parse(value).object() catch(e : Dynamic) null;
+      v = try thx.QueryString.parse(value).toObject() catch(e : Dynamic) null;
       if(null != v)
         return Promise.value(v);
       return Promise.error(new Error('"$value" cannot be transformed to an Object value'));
