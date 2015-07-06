@@ -46,6 +46,20 @@ class App {
     server.listen(port, host, backlog, callback);
     return server;
   }
+
+  public function use(?path : String, middleware : Middleware) {
+    if(null == path)
+      express.use(middleware);
+    else
+      express.use(path, middleware);
+    return this;
+  }
+
+  public function error(middleware : ErrorMiddleware) {
+    express.use(middleware);
+    return this;
+  }
+
 #end
   macro public static function installNpmDependencies(?createPackageJson : Bool) {
     if(null == createPackageJson)
