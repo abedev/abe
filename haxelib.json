@@ -5,8 +5,8 @@
   "classPath": "src",
   "tags": ["nodejs", "webserver", "rest"],
   "description": "Easy webserver for Haxe and NodeJS built on top of Express",
-  "releasenote": "Added thx.promise dependency.",
-  "version": "0.9.1",
+  "releasenote": "Added `app.error()`.",
+  "version": "0.9.2",
   "contributors": ["fponticelli", "mlms13"],
   "dependencies" : {
     "thx.core" : "",
