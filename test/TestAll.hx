@@ -19,6 +19,7 @@ class TestAll {
     runner.addCase(new TestStatic());
     runner.addCase(new TestValidate());
     runner.addCase(new TestIs());
+    runner.addCase(new TestError());
 
     // report
     Report.create(runner);
