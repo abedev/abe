@@ -4,7 +4,7 @@ package abe;
 import express.Middleware;
 import js.node.Http;
 import js.node.Https;
-import js.node.Tls.TlsServerOptions;
+import js.node.Tls.TlsCreateServerOptions;
 import express.Express;
 #end
 
@@ -41,7 +41,7 @@ class App {
     return server;
   }
 
-  public function https(port : Int, options : TlsServerOptions, ?host : String, ?backlog : Int, ?callback : Void -> Void) {
+  public function https(port : Int, options : TlsCreateServerOptions, ?host : String, ?backlog : Int, ?callback : Void -> Void) {
     var server = Https.createServer(options, cast express);
     server.listen(port, host, backlog, callback);
     return server;
