@@ -1,13 +1,15 @@
 package abe.mw;
 
 import abe.error.BaseHttpError;
+import express.Middleware;
+import express.Next;
+import express.Request;
+import express.Response;
 import js.Error;
 using thx.Strings;
 
 class ErrorHandler {
-  public static var handle(default, null) : ErrorMiddleware;
-
-  handle = function(err : Error, request : Request, response : Response, next : Next) {
+  public static var handle(default, null) : ErrorMiddleware = function(err : Error, request : Request, response : Response, next : Next) {
     var httpError : BaseHttpError = Std.is(err, BaseHttpError) ? cast err : null;
 
     // if we have an error we can understand, just do the right thing
