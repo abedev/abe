@@ -7,7 +7,12 @@ using thx.Strings;
 class TestErrorHandling extends TestCalls {
   public function testBasicHttpError() {
     app.router.register(new ErrorMaker());
-    app.router.error(abe.mw.ErrorHandler.handle);
+
+    var normalRouter = app.router.mount("/"),
+        debugRouter = app.router.mount("/debug");
+
+    normalRouter.error(abe.mw.ErrorHandler.handle());
+    debugRouter.error(abe.mw.ErrorHandler.handle(true));
 
     get("/badrequest", function (msg, res) {
       Assert.equals("Bad Request", msg);
@@ -64,6 +69,10 @@ class TestErrorHandling extends TestCalls {
     });
 
     get("/completely/missing", function (_, res) {
+      Assert.equals(404, res.statusCode);
+    });
+
+    get("/debug/badRequest", function (_, res) {
       Assert.equals(404, res.statusCode);
     });
   }
