@@ -33,6 +33,36 @@ class TestErrorHandling extends TestCalls {
       Assert.equals(418, res.statusCode);
     });
 
+    get("/internalserver", function (msg, res) {
+      Assert.equals("Internal Server Error", msg);
+      Assert.equals(500, res.statusCode);
+    });
+
+    get("/notimplemented", function (msg, res) {
+      Assert.equals("Not Implemented", msg);
+      Assert.equals(501, res.statusCode);
+    });
+
+    get("/badgateway", function (msg, res) {
+      Assert.equals("Bad Gateway", msg);
+      Assert.equals(502, res.statusCode);
+    });
+
+    get("/serviceunavailable", function (msg, res) {
+      Assert.equals("Service Unavailable", msg);
+      Assert.equals(503, res.statusCode);
+    });
+
+    get("/gatewaytimeout", function (msg, res) {
+      Assert.equals("Gateway Timeout", msg);
+      Assert.equals(504, res.statusCode);
+    });
+
+    get("/uncaught", function (msg, res) {
+      Assert.equals("Something went wrong", msg);
+      Assert.equals(500, res.statusCode);
+    });
+
     get("/completely/missing", function (_, res) {
       Assert.equals(404, res.statusCode);
     });
@@ -63,5 +93,35 @@ class ErrorMaker implements abe.IRoute {
   @:get("/teapot/coffee")
   function teapot() {
     next.error(new BaseHttpError("I'm a teapot", 418));
+  }
+
+  @:get("/internalserver")
+  function internalServerError() {
+    next.error(new InternalServerError());
+  }
+
+  @:get("/notimplemented")
+  function notImplemented() {
+    next.error(new NotImplementedError());
+  }
+
+  @:get("/badgateway")
+  function badGateway() {
+    next.error(new BadGatewayError());
+  }
+
+  @:get("/gatewaytimeout")
+  function gatewayTimeout() {
+    next.error(new GatewayTimeoutError());
+  }
+
+  @:get("/serviceunavailable")
+  function serviceUnavailable() {
+    next.error(new ServiceUnavailableError());
+  }
+
+  @:get("/uncaught")
+  function uncaughtError() {
+    next.error(new thx.Error("Something went wrong"));
   }
 }
