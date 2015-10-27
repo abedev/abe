@@ -13,7 +13,7 @@ class ErrorHandler {
     var httpError : BaseHttpError = Std.is(err, BaseHttpError) ? cast err : null;
 
     // if we have an error we can understand, just do the right thing
-    if (httpError != null) sendError(httpError.statusCode, httpError, response);
+    if (httpError != null) sendError(httpError.status, httpError, response);
 
     // otherwise, check the name and message for common terms
     else if (err.name.toLowerCase().startsWith("unauthorized")) sendError(401, err, response);
