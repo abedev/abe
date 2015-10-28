@@ -6,11 +6,11 @@ using thx.Strings;
 
 class TestErrorHandling extends TestCalls {
   public function testBasicHttpError() {
-    app.router.register(new ErrorMaker());
-
     var normalRouter = app.router.mount("/"),
         debugRouter = app.router.mount("/debug");
 
+    normalRouter.register(new ErrorMaker());
+    debugRouter.register(new ErrorMaker());
     normalRouter.error(abe.mw.ErrorHandler.handle());
     debugRouter.error(abe.mw.ErrorHandler.handle(true));
 
@@ -72,8 +72,12 @@ class TestErrorHandling extends TestCalls {
       Assert.equals(404, res.statusCode);
     });
 
-    get("/debug/badRequest", function (_, res) {
-      Assert.equals(404, res.statusCode);
+    // in debug mode, the request returns an object instead of a string
+    get("/debug/badRequest", function (body, res) {
+      var parsed = haxe.Json.parse(body);
+      Assert.equals("Bad Request", parsed.message);
+      Assert.isTrue(parsed.stackItems.length > 0);
+      Assert.equals(400, res.statusCode);
     });
   }
 }
