@@ -110,9 +110,9 @@ class AutoRegisterRoute {
             return f;
           });
 
-      exprs.push(Context.parse('var processor = new abe.core.ArgumentProcessor(filters, [${args}])', pos));
-      exprs.push(Context.parse('var process = new $fullName({ $emptyArgs }, instance, processor)', pos));
-      exprs.push(Context.parse('var uses : Array<express.Middleware> = []', pos));
+      exprs.push(Context.parse('var __abe_processor = new abe.core.ArgumentProcessor(filters, [${args}])', pos));
+      exprs.push(Context.parse('var __abe_process = new $fullName({ $emptyArgs }, instance, __abe_processor)', pos));
+      exprs.push(Context.parse('var __abe_uses : Array<express.Middleware> = []', pos));
       if(definition.ises.length > 0) {
         var ises = "[" + definition.ises.join(", ") + "]";
         ises = 'function(req : express.Request, res : express.Response, next : express.Next) {
@@ -120,13 +120,13 @@ class AutoRegisterRoute {
               next.call();
             next.route();
           }';
-        exprs.push(Context.parse('uses = uses.concat([$ises])', pos));
+        exprs.push(Context.parse('__abe_uses = __abe_uses.concat([$ises])', pos));
       }
       if(definition.uses.length > 0)
-        exprs.push(Context.parse('uses = uses.concat([${definition.uses.join(", ")}])', pos));
+        exprs.push(Context.parse('__abe_uses = __abe_uses.concat([${definition.uses.join(", ")}])', pos));
       if(validates.length > 0)
-        exprs.push(Context.parse('uses = uses.concat([${validates.join(", ")}])', pos));
-      exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast process, uses, [${definition.errors.join(", ")}])', pos));
+        exprs.push(Context.parse('__abe_uses = __abe_uses.concat([${validates.join(", ")}])', pos));
+      exprs.push(Context.parse('router.registerMethod("${definition.path}", "${definition.method}", cast __abe_process, __abe_uses, [${definition.errors.join(", ")}])', pos));
 
       var params = definition.args.map(function(arg) : Field{
           var kind = complexTypeFromString(arg.type);
