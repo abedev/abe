@@ -20,6 +20,7 @@ class TestAll {
     runner.addCase(new TestValidate());
     runner.addCase(new TestIs());
     runner.addCase(new TestError());
+    runner.addCase(new TestErrorHandling());
 
     // report
     Report.create(runner);
