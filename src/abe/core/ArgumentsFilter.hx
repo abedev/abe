@@ -7,6 +7,8 @@ class ArgumentsFilter {
       var filters : Array<IFilterArgument<Dynamic>> = [],
           bool   = new BoolFilter(),
           date   = new DateFilter(),
+          dt     = new DateTimeFilter(),
+          dtutc  = new DateTimeUtcFilter(),
           float  = new FloatFilter(),
           int    = new IntFilter(),
           string = new StringFilter(),
@@ -14,6 +16,8 @@ class ArgumentsFilter {
 
       filters.push(bool);
       filters.push(date);
+      filters.push(dt);
+      filters.push(dtutc);
       filters.push(float);
       filters.push(int);
       filters.push(string);

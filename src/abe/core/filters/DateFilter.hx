@@ -1,11 +1,12 @@
 package abe.core.filters;
 
 import thx.Floats;
+using thx.DateTimeUtc;
 import thx.Error;
 import thx.promise.Promise;
 
 class DateFilter implements IFilterArgument<Date> {
-  static var TIME_PATTERN = ~/$\d+^/;
+  static var TIME_PATTERN = ~/^\d+$/;
   public function new(){}
 
   public var type = "Date";
@@ -16,12 +17,21 @@ class DateFilter implements IFilterArgument<Date> {
     if(!Std.is(value, String))
       return Promise.error(new Error('"$value" is not a type that can be converted to a Date'));
 
-    if(TIME_PATTERN.match(value))
-      return Promise.value(Date.fromTime(Floats.parse(value)));
     try {
-      return Promise.value(Date.fromString(value));
+      // try first to parse as a string that datetimeutc understands
+      // e.g. 2016-08-07T23:18:22.123Z
+      return Promise.value(DateTimeUtc.fromString(value).toDate());
+
     } catch(e : Dynamic) {
-      return Promise.error(new Error('"$value" is not a Date value'));
+      // fall back to parsing as float buried inside a string
+      if(TIME_PATTERN.match(value))
+        return Promise.value(Date.fromTime(Floats.parse(value)));
+
+      try {
+        return Promise.value(Date.fromString(value));
+      } catch(e : Dynamic) {
+        return Promise.error(new Error('"$value" is not a Date value'));
+      }
     }
   }
 }
