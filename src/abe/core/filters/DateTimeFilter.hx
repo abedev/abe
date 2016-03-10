@@ -7,7 +7,7 @@ import thx.promise.Promise;
 class DateTimeFilter implements IFilterArgument<DateTime> {
   public function new(){}
 
-  public var type = "DateTime";
+  public var type = "thx.DateTime";
   public function filter(value : Dynamic) : Promise<DateTime> {
     if(!Std.is(value, String))
       return Promise.error(new Error('"$value" must be a string to be parsed as DateTime'));
