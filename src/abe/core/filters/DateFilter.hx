@@ -1,9 +1,9 @@
 package abe.core.filters;
 
 import thx.Floats;
+using thx.DateTimeUtc;
 import thx.Error;
 import thx.promise.Promise;
-using thx.DateTimeUtc;
 
 class DateFilter implements IFilterArgument<Date> {
   static var TIME_PATTERN = ~/^\d+$/;
