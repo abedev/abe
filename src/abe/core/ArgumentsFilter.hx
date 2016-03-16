@@ -11,6 +11,7 @@ class ArgumentsFilter {
           dtutc  = new DateTimeUtcFilter(),
           float  = new FloatFilter(),
           int    = new IntFilter(),
+          ldate  = new LocalDateFilter(),
           string = new StringFilter(),
           object = new ObjectFilter();
 
@@ -20,10 +21,14 @@ class ArgumentsFilter {
       filters.push(dtutc);
       filters.push(float);
       filters.push(int);
+      filters.push(ldate);
       filters.push(string);
       filters.push(object);
       filters.push(new ArrayFilter("Bool", ",", bool));
       filters.push(new ArrayFilter("Date", ",", date));
+      filters.push(new ArrayFilter("thx.DateTime", ",", dt));
+      filters.push(new ArrayFilter("thx.DateTimeUtc", ",", dtutc));
+      filters.push(new ArrayFilter("thx.LocalDate", ",", ldate));
       filters.push(new ArrayFilter("Float", ",", float));
       filters.push(new ArrayFilter("Int", ",", int));
       filters.push(new ArrayFilter("String", ",", string));
