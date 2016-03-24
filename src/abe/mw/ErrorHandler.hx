@@ -30,10 +30,10 @@ class ErrorHandler {
 
     // conditionally send/log err.stack
     if (debug) {
-      trace('ABE SENDING ERROR STATUS: $status');
-      if (err.stack != null) {
-        trace(err.stack);
-      }
+      // trace('ABE SENDING ERROR STATUS: $status');
+      // if (err.stack != null) {
+      //   trace(err.stack);
+      // }
 
       // send the full error object to the client
       response.send(err);
@@ -41,6 +41,6 @@ class ErrorHandler {
     }
 
     // no debug, so just send the message
-    response.send(err.message);
+    response.send({ message : err.message });
   }
 }
