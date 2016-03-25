@@ -28,9 +28,9 @@ class ArgumentsFilter {
       filters.push(new ArrayFilter("Date", ",", date));
       filters.push(new ArrayFilter("thx.DateTime", ",", dt));
       filters.push(new ArrayFilter("thx.DateTimeUtc", ",", dtutc));
-      filters.push(new ArrayFilter("thx.LocalDate", ",", ldate));
       filters.push(new ArrayFilter("Float", ",", float));
       filters.push(new ArrayFilter("Int", ",", int));
+      filters.push(new ArrayFilter("thx.LocalDate", ",", ldate));
       filters.push(new ArrayFilter("String", ",", string));
       filters.push(new ArrayFilter("{}", "|", object));
       return filters;

@@ -93,20 +93,25 @@ class AutoRegisterRoute {
           validates = definition.validates.mapi(function(val, i) {
             var name = valueArgs[i].name,
                 sources = valueArgs[i].sources.map(function(s) return '"$s"').join(", ");
-            var f = '\nfunction (req : express.Request, res : express.Response, next : express.Next) {
-  var f = $val;
-  if (f == null) {
-    next.call();
-    return;
-  }
+            var f = if(null == val) {
+              '\nfunction (req : express.Request, res : express.Response, next : express.Next) {
+  next.call();
+}';
+            } else {
+              '\nfunction (req : express.Request, res : express.Response, next : express.Next) {
   switch abe.core.ArgumentProcessor.getValue("$name", req, [$sources]) {
     case None:
-      next.error(new js.Error("argument not found $name"));
+      var err = new js.Error("argument not found $name");
+      err.status = 400;
+      next.error(err);
       return;
     case Some(value):
+      var f = $val;
       f(value, req, res, next);
   }
 }';
+            }
+trace(f);
             return f;
           });
 
@@ -174,34 +179,35 @@ class AutoRegisterRoute {
   static function generateValidateFunction(f : Expr, type) {
     var t = try Context.follow(Context.typeof(f)) catch(e : Dynamic) null;
     if(null == t) {
+      // simple validation expression
       return 'function(value : $type, req : express.Request, res : express.Response, next : express.Next) {
-  var fn = function(_ : $type) : Bool return ${ExprTools.toString(f)};
-  if(null == value || fn(value)) {
-    next.call();
-  } else {
-    var err = new js.Error("cannot validate "+value);
-    untyped err.status = 400;
-    next.error(err);
-  }
-}';
+                var fn = function(_ : $type) : Bool return ${ExprTools.toString(f)};
+                if(null == value || fn(value)) {
+                  next.call();
+                } else {
+                  var err = new js.Error("value "+value+" does not match the required validation");
+                  untyped err.status = 400;
+                  next.error(err);
+                }
+              }';
     }
     return switch t {
       case TFun(args, TAbstract(ret,_)) if(args.length == 1 && ret.toString() == "Bool"): // straight validate
         var sf = ExprTools.toString(f);
         return 'function(value : $type, req : express.Request, res : express.Response, next : express.Next) {
-  var fn = $sf;
-  if(null == value || fn(value)) {
-    next.call();
-  } else {
-    var err = new js.Error("cannot validate "+value);
-    untyped err.status = 400;
-    next.error(err);
-  }
-}';
+                var fn = $sf;
+                if(null == value || fn(value)) {
+                  next.call();
+                } else {
+                  var err = new js.Error("cannot validate "+value);
+                  untyped err.status = 400;
+                  next.error(err);
+                }
+              }';
       case TFun(args, TAbstract(ret,_)) if(args.length == 4 && ret.toString() == "Void"): // complex validate
         ExprTools.toString(f);
       case TMono(v):
-        "null";
+        null;
       case s:
         Context.error('invalid expression @:validate(${ExprTools.toString(f)})', f.pos);
     }
