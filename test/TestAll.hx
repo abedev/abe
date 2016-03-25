@@ -2,13 +2,16 @@ import utest.ui.Report;
 import utest.Runner;
 
 class TestAll {
-  static var port = 8888;
   public static function main() {
     abe.App.installNpmDependencies();
 
+    abe.Ports.ifAvailable(TestCalls.port)
+      .success(function(_) runTests())
+      .failure(function(e) js.Node.console.error('unable to run tests: ${e.message}'));
+  }
+
+  public static function runTests() {
     var runner = new Runner();
-    // run static tests
-    runner.addCase(new TestAll());
 
     // run REST tests
     runner.addCase(new TestManual());
