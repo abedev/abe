@@ -73,7 +73,6 @@ class TestErrorHandling extends TestCalls {
     });
 
     get("/debug/badRequest", function (body, res) {
-      trace(body);
       var parsed = haxe.Json.parse(body);
       Assert.equals("Bad Request", parsed.message);
       Assert.isTrue(parsed.stackItems.length > 0);

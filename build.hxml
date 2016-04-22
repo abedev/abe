@@ -11,5 +11,4 @@
 -main TestAll
 -js bin/test.js
 -cmd node bin/test.js
--debug
 #-dce no

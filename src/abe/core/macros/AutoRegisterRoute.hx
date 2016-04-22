@@ -10,6 +10,7 @@ using thx.Iterables;
 using thx.Arrays;
 using thx.Strings;
 using thx.macro.MacroTypes;
+using thx.macro.MacroClassTypes;
 
 class AutoRegisterRoute {
   public static function register(router : Expr, instance : Expr) : Expr {
@@ -281,13 +282,10 @@ class AutoRegisterRoute {
             return 'args.${arg.name}';
           }).concat(["request", "response", "next"]).join(", "),
         execute = 'instance.$name($args)';
-    // 
-    // switch returnType {
-    //   case TAbstract(_.get() => { name: "Void" }, _):
-    //     // do nothing, all the logic is managed inside the route method
-    //   case other:
-    //     Context.error('route returns invalid type $returnType', pos);
-    // }
+
+    // SMART RETURN TYPES
+    execute = wrapExecution(returnType, execute, pos);
+
     return [createFunctionField("execute",
       [AOverride],
       [
@@ -297,6 +295,127 @@ class AutoRegisterRoute {
       ],
       Context.parse(execute, Context.currentPos()))];
   }
+
+  static function wrapExecution(type : Type, exec : String, pos)
+    return try switch type {
+      case TInst(cls, _) if(MacroClassTypes.classExtends(cls.get(), MacroClassTypes.resolveClass("thx.Error"))):
+        // go to next error
+        'next.error($exec)';
+      case TAnonymous(getToJsonMethodFromAnon(_.get()) => toJson),
+           TInst(getToJsonMethodFromClass(_.get()) => toJson, _) if(toJson != null):
+          if(toJson.returnString) {
+            'response.send($exec.${toJson.method}())';
+          } else {
+            'response.json($exec.${toJson.method}())';
+          }
+      case TAnonymous(_):
+        // send the resposone as json
+        'response.json($exec)';
+      case _: switch MacroTypes.simplifiedType(type) {
+        case { name : "Void" }:
+          // do nothing, all the logic is managed inside the route method
+          exec;
+        case { name : "String" }:
+          // send the resposone as text
+          'response.send($exec)';
+        case { name : "Array" },  { name : "thx.ReadonlyArray" }:
+          // send the resposone as json
+          'response.json(cast $exec)'; // cast is for thx.ReadonlyArray
+        case { name : "thx.Nil" }:
+          // send a 204 No Content
+          '{ $exec; response.sendStatus(204); }';
+        case { name : "thx.Path" }:
+          // send some file content
+          'response.sendFile($exec)';
+        case { name : "thx.Url" }:
+          // redirect with a 302
+          'response.redirect($exec)';
+        case { name : "Int" }:
+          // send a specific status code
+          'response.sendStatus($exec)';
+        case { name : "Map", params : [MacroTypes.simplifiedType(_) => left, right] } if(left.name == "String"):
+          'response.json(thx.Maps.toObject($exec))';
+        case { name : "thx.Set" }:
+          'response.json($exec)';
+        case { name : "thx.OrderedSet" }:
+          'response.json($exec.toArray())';
+        case { name : "thx.OrderedMap", params : [MacroTypes.simplifiedType(_) => left, right] } if(left.name == "String"):
+          'response.json(thx.Arrays.reduce($exec.tuples(), function(o, t) {
+              Reflect.setField(o, t.left, t.right);
+              return o;
+            }, {}))';
+        case { name : "thx.Result", params : [right, left] },
+             { name : "thx.Either", params : [left, right] },
+             { name : "haxe.ds.Either", params : [left, right] }:
+          // resolve left and right and apply the appropriated one
+          var r = wrapExecution(right, 'v', pos),
+              l = wrapExecution(left, 'v', pos);
+          '{
+             var r = $exec;
+             switch r {
+               case Right(v): $r;
+               case Left(v): $l;
+             }
+           }';
+        case { name : "thx.promise.Promise", params : [param] }:
+           // resolve left and right and apply the appropriated one
+           var p = wrapExecution(param, 'v', pos);
+           '$exec
+              .success(function(v) $p)
+              .failure(function(e) next.error(e))';
+        case { name : "thx.promise.Future", params : [param] }:
+           var p = wrapExecution(param, 'v', pos);
+           '$exec.then(function(v) $p)';
+
+        case other:
+          trace(other, type);
+          Context.error('route returns invalid type ${other.name}', pos);
+      }
+    } catch(e:Dynamic) {
+      trace(e);
+      Context.error('the full return type cannot be inferred, please provide a return type', pos);
+    }
+
+  static function getToJsonMethodFromAnon(type : AnonType) : Null<{ method : String, returnString : Bool }> {
+    var field = getJsonField(type.fields);
+    if(null == field)
+      return null;
+    return getToJsonInfo(field.type, field.name);
+  }
+
+  static function getToJsonMethodFromClass(type : ClassType) : Null<{ method : String, returnString : Bool }> {
+    var field = getJsonField(type.fields.get());
+    if(null == field)
+      return null;
+    return getToJsonInfo(field.type, field.name);
+  }
+
+  static function getJsonField(fields : Array<ClassField>) {
+    return fields.find(function(field) {
+      return field.name.toLowerCase() == 'tojson';
+    });
+  }
+
+  static function getToJsonInfo(type : Type, name : String) {
+    return switch Context.follow(type) {
+      case TFun([], TypeTools.toString(Context.follow(_)) => type) if(type == "String"): {
+        method : name,
+        returnString : true
+      };
+      case TFun([], TAnonymous(_)): {
+        method : name,
+        returnString : false
+      };
+      case TFun([], TypeTools.toString(Context.follow(_)) => type) if(type == "Dynamic"): {
+        method : name,
+        returnString : false
+      };
+      case other:
+        trace(other);
+        null;
+    }
+  }
+
 
   static function getArguments(field : ClassField) : Array<ArgumentRequirement> {
     return switch Context.follow(field.type) {

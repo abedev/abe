@@ -20,6 +20,7 @@ class TestAll {
     runner.addCase(new TestIs());
     runner.addCase(new TestError());
     runner.addCase(new TestErrorHandling());
+    runner.addCase(new TestTypedRoutes());
 
     // report
     Report.create(runner);
