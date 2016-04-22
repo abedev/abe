@@ -2,7 +2,6 @@ import utest.ui.Report;
 import utest.Runner;
 
 class TestAll {
-  static var port = 8888;
   public static function main() {
     abe.App.installNpmDependencies();
 
