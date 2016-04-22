@@ -96,8 +96,7 @@ class TestTypedRoutes extends TestCalls {
     });
 
     get("/typed/test/tojson/cls/dynamic", function(o, _) {
-      trace(o);
-      // Assert.equals("value", haxe.Json.parse(o).message);
+      Assert.equals("value", haxe.Json.parse(o).message);
     });
 
     get("/typed/test/tojson/anon/string", function(o, _) {
@@ -114,6 +113,10 @@ class TestTypedRoutes extends TestCalls {
 
     get("/typed/test/orderedMap", function(o, _) {
       Assert.same({ a : 1, b : 2}, haxe.Json.parse(o));
+    });
+
+    get("/typed/test/buffer", function(msg, _) {
+      Assert.equals("BYTES", msg);
     });
   }
 }
@@ -220,6 +223,11 @@ class TypedRoutes implements abe.IRoute {
   @:get("/orderedSet")
   function orderedSet() {
     return OrderedSet.create([1,1,2]);
+  }
+
+  @:get("/buffer")
+  function buffer() {
+    return new js.node.Buffer("BYTES");
   }
 }
 

@@ -301,6 +301,8 @@ class AutoRegisterRoute {
       case TInst(cls, _) if(MacroClassTypes.classExtends(cls.get(), MacroClassTypes.resolveClass("thx.Error"))):
         // go to next error
         'next.error($exec)';
+      case TInst(cls, _) if(MacroClassTypes.classExtends(cls.get(), MacroClassTypes.resolveClass("js.node.buffer.Buffer"))):
+        'response.send($exec)';
       case TAnonymous(getToJsonMethodFromAnon(_.get()) => toJson),
            TInst(getToJsonMethodFromClass(_.get()) => toJson, _) if(toJson != null):
           if(toJson.returnString) {
@@ -358,17 +360,15 @@ class AutoRegisterRoute {
              }
            }';
         case { name : "thx.promise.Promise", params : [param] }:
-           // resolve left and right and apply the appropriated one
-           var p = wrapExecution(param, 'v', pos);
-           '$exec
-              .success(function(v) $p)
-              .failure(function(e) next.error(e))';
+          // resolve left and right and apply the appropriated one
+          var p = wrapExecution(param, 'v', pos);
+          '$exec
+             .success(function(v) $p)
+             .failure(function(e) next.error(e))';
         case { name : "thx.promise.Future", params : [param] }:
-           var p = wrapExecution(param, 'v', pos);
-           '$exec.then(function(v) $p)';
-
+          var p = wrapExecution(param, 'v', pos);
+          '$exec.then(function(v) $p)';
         case other:
-          trace(other, type);
           Context.error('route returns invalid type ${other.name}', pos);
       }
     } catch(e:Dynamic) {
