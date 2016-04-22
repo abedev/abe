@@ -9,6 +9,7 @@ import abe.core.macros.Macros.*;
 using thx.Iterables;
 using thx.Arrays;
 using thx.Strings;
+using thx.macro.MacroTypes;
 
 class AutoRegisterRoute {
   public static function register(router : Expr, instance : Expr) : Expr {
@@ -37,6 +38,8 @@ class AutoRegisterRoute {
             name: field.name,
             path: getMetaAsString(meta, 0),
             args: args,
+            position: field.pos,
+            returnType: MacroTypes.getFunctionReturn(Context.follow(field.type)),
             method: meta.name.substring(1),
             uses: uses.map(ExprTools.toString),
             ises: ises.map(ExprTools.toString),
@@ -131,14 +134,14 @@ class AutoRegisterRoute {
       var params = definition.args.map(function(arg) : Field{
           var kind = complexTypeFromString(arg.type);
           return {
-            pos : Context.currentPos(),
+            pos : definition.position,
             name : arg.name,
             kind : FVar(kind)
           };
         });
 
       if(null == try Context.getType(processName) catch(e : Dynamic) null) {
-        var fields = createProcessFields(definition.name, definition.args);
+        var fields = createProcessFields(definition.name, definition.args, definition.returnType, definition.position);
         Context.defineType({
             pos  : Context.currentPos(),
             pack : type.pack,
@@ -273,11 +276,18 @@ class AutoRegisterRoute {
     return results;
   }
 
-  static function createProcessFields(name : String, args : Array<ArgumentRequirement>) {
+  static function createProcessFields(name : String, args : Array<ArgumentRequirement>, returnType : Type, pos) {
     var args = args.map(function(arg) {
             return 'args.${arg.name}';
           }).concat(["request", "response", "next"]).join(", "),
         execute = 'instance.$name($args)';
+    // 
+    // switch returnType {
+    //   case TAbstract(_.get() => { name: "Void" }, _):
+    //     // do nothing, all the logic is managed inside the route method
+    //   case other:
+    //     Context.error('route returns invalid type $returnType', pos);
+    // }
     return [createFunctionField("execute",
       [AOverride],
       [
