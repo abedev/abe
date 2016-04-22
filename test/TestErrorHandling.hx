@@ -72,8 +72,8 @@ class TestErrorHandling extends TestCalls {
       Assert.equals(404, res.statusCode);
     });
 
-    // in debug mode, the request returns an object instead of a string
     get("/debug/badRequest", function (body, res) {
+      trace(body);
       var parsed = haxe.Json.parse(body);
       Assert.equals("Bad Request", parsed.message);
       Assert.isTrue(parsed.stackItems.length > 0);
