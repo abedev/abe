@@ -13,7 +13,7 @@ class TestTypedRoutes extends TestCalls {
   public function testPath() {
     var typed = router.mount("/typed");
     typed.register(new TypedRoutes());
-    typed.error(abe.mw.ErrorHandler.handle());
+    typed.error(abe.mw.ErrorHandler.handle(TextError));
 
     get("/typed/test/text/", function(msg, _) {
       Assert.equals('MY TEXT', msg);

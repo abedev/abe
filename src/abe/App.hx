@@ -35,17 +35,23 @@ class App {
     return sub;
   }
 
-  public function http(port : Int, ?host : String, ?backlog : Int, ?callback : Void -> Void) {
-    var server = Http.createServer(cast express);
+  public function http(port : Int, ?host : String, ?backlog : Int, ?callback : Void -> Void) : js.node.http.Server {
+    var server = httpServer();
     server.listen(port, host, backlog, callback);
     return server;
   }
 
+  public function httpServer() : js.node.http.Server
+    return Http.createServer(cast express);
+
   public function https(port : Int, options : TlsCreateServerOptions, ?host : String, ?backlog : Int, ?callback : Void -> Void) {
-    var server = Https.createServer(options, cast express);
+    var server = httpsServer();
     server.listen(port, host, backlog, callback);
     return server;
   }
+
+  public function httpsServer() : js.node.https.Server
+    return Https.createServer(cast express);
 
   public function use(?path : String, middleware : Middleware) {
     if(null == path)
