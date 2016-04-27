@@ -11,26 +11,26 @@ class TestErrorHandling extends TestCalls {
 
     normalRouter.register(new ErrorMaker());
     debugRouter.register(new ErrorMaker());
-    normalRouter.error(abe.mw.ErrorHandler.handle());
-    debugRouter.error(abe.mw.ErrorHandler.handle(true));
+    normalRouter.error(abe.mw.ErrorHandler.handle(TextError));
+    debugRouter.error(abe.mw.ErrorHandler.handle(JsonError));
 
     get("/badrequest", function (err, res) {
-      Assert.equals("Bad Request", extractMessage(err));
+      Assert.equals("Bad Request", err);
       Assert.equals(400, res.statusCode);
     });
 
     get("/unauthorized", function (err, res) {
-      Assert.equals("Must be logged in", extractMessage(err));
+      Assert.equals("Must be logged in", err);
       Assert.equals(401, res.statusCode);
     });
 
     get("/forbidden", function (err, res) {
-      Assert.equals("Forbidden", extractMessage(err));
+      Assert.equals("Forbidden", err);
       Assert.equals(403, res.statusCode);
     });
 
     get("/notfound", function (err, res) {
-      Assert.isTrue(extractMessage(err).startsWith("Resource"));
+      Assert.isTrue(err.startsWith("Resource"));
       Assert.equals(404, res.statusCode);
     });
 
@@ -39,32 +39,32 @@ class TestErrorHandling extends TestCalls {
     });
 
     get("/internalserver", function (err, res) {
-      Assert.equals("Internal Server Error", extractMessage(err));
+      Assert.equals("Internal Server Error", err);
       Assert.equals(500, res.statusCode);
     });
 
     get("/notimplemented", function (err, res) {
-      Assert.equals("Not Implemented", extractMessage(err));
+      Assert.equals("Not Implemented", err);
       Assert.equals(501, res.statusCode);
     });
 
     get("/badgateway", function (err, res) {
-      Assert.equals("Bad Gateway", extractMessage(err));
+      Assert.equals("Bad Gateway", err);
       Assert.equals(502, res.statusCode);
     });
 
     get("/serviceunavailable", function (err, res) {
-      Assert.equals("Service Unavailable", extractMessage(err));
+      Assert.equals("Service Unavailable", err);
       Assert.equals(503, res.statusCode);
     });
 
     get("/gatewaytimeout", function (err, res) {
-      Assert.equals("Gateway Timeout", extractMessage(err));
+      Assert.equals("Gateway Timeout", err);
       Assert.equals(504, res.statusCode);
     });
 
     get("/uncaught", function (err, res) {
-      Assert.equals("Something went wrong", extractMessage(err));
+      Assert.equals("Something went wrong", err);
       Assert.equals(500, res.statusCode);
     });
 
@@ -72,17 +72,13 @@ class TestErrorHandling extends TestCalls {
       Assert.equals(404, res.statusCode);
     });
 
-    // in debug mode, the request returns an object instead of a string
     get("/debug/badRequest", function (body, res) {
       var parsed = haxe.Json.parse(body);
       Assert.equals("Bad Request", parsed.message);
-      Assert.isTrue(parsed.stackItems.length > 0);
+      // Assert.isTrue(parsed.stackItems.length > 0);
       Assert.equals(400, res.statusCode);
     });
   }
-
-  static function extractMessage(err : String) : String
-    return haxe.Json.parse(err).message;
 }
 
 class ErrorMaker implements abe.IRoute {

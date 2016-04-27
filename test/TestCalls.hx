@@ -8,7 +8,7 @@ import js.node.http.*;
 import js.node.Querystring;
 
 class TestCalls {
-  public static var port = 8765;
+  public static var port = 42476;
   public function new() {}
 
   var app : App;
