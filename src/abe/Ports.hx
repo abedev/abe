@@ -24,7 +24,7 @@ class Ports {
       });
       client.once("error", function(e) {
         cleanup();
-        if(e.code == "ECONNREFUSED")
+        if(e.code == "ECONNREFUSED" || e.code == "ENOTFOUND")
           resolve(Nil.nil);
         else
           reject(thx.Error.fromDynamic(e));
