@@ -30,7 +30,7 @@ class ArgumentProcessor<TArgs : {}> {
       }
     }
 
-    return Promise.all(promises).mapEither(
+    return Promise.all(promises).mapEitherFuture(
       function(_)   return Ok,
       function(err) return InvalidFilter(err)
     );
