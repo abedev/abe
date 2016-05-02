@@ -1,7 +1,8 @@
 package abe.core;
 
-using haxe.ds.Option;
 import abe.core.ArgumentProcessing;
+using haxe.ds.Option;
+import thx.fp.Functions.const;
 using thx.promise.Future;
 using thx.promise.Promise;
 using thx.Strings;
@@ -30,10 +31,7 @@ class ArgumentProcessor<TArgs : {}> {
       }
     }
 
-    return Promise.all(promises).mapEitherFuture(
-      function(_)   return Ok,
-      function(err) return InvalidFilter(err)
-    );
+    return Promise.all(promises).mapEitherFuture(const(Ok), InvalidFilter);
   }
 
   public static function getValue(name : String, source : { params : {}, query : {}, body : {} }, sources : Array<Source>) : Option<Dynamic> {
