@@ -1,0 +1,50 @@
+{
+  "dependencies": [
+    {
+      "name": "express",
+      "type": "git",
+      "ref": "2f695ee",
+      "url": "git@github.com:abedev/hxexpress"
+    },
+    {
+      "name": "hxnodejs",
+      "type": "git",
+      "ref": "4a3d937",
+      "url": "git@github.com:HaxeFoundation/hxnodejs"
+    },
+    {
+      "name": "jsrequire",
+      "type": "git",
+      "ref": "e1c1141",
+      "url": "git@github.com:abedev/jsrequire"
+    },
+    {
+      "name": "npm",
+      "type": "git",
+      "dir": "src",
+      "ref": "40da4e1",
+      "url": "git@github.com:abedev/npm"
+    },
+    {
+      "name": "thx.core",
+      "type": "git",
+      "dir": "src",
+      "ref": "5a137fc",
+      "url": "git@github.com:fponticelli/thx.core"
+    },
+    {
+      "name": "thx.promise",
+      "type": "git",
+      "dir": "src",
+      "ref": "9fe92f9",
+      "url": "git@github.com:fponticelli/thx.promise"
+    },
+    {
+      "name": "utest",
+      "type": "git",
+      "dir": "src",
+      "ref": "ecbd3ad",
+      "url": "git@github.com:fponticelli/utest"
+    }
+  ]
+}
