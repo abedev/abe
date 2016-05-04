@@ -18,9 +18,9 @@ class ArrayFilter<T> implements IFilterArgument<Array<T>> {
   public function filter(value : Dynamic) : Promise<Array<T>> {
     if(Std.is(value, Array)) {
       var values : Array<Dynamic> = value;
-      return Promise.all(values.map(subFilter.filter));
+      return Promise.sequence(values.map(subFilter.filter));
     } else if(Std.is(value, String) && null != delimiter) {
-      return Promise.all((value : String).split(delimiter).map(subFilter.filter));
+      return Promise.sequence((value : String).split(delimiter).map(subFilter.filter));
     } else {
       return Promise.error(new Error('"$value" is not an Array of $subType'));
     }

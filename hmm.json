@@ -9,7 +9,7 @@
     {
       "name": "hxnodejs",
       "type": "git",
-      "ref": "4a3d937",
+      "ref": "899244b",
       "url": "git@github.com:HaxeFoundation/hxnodejs"
     },
     {
@@ -22,21 +22,21 @@
       "name": "npm",
       "type": "git",
       "dir": "src",
-      "ref": "40da4e1",
+      "ref": "67c8d39",
       "url": "git@github.com:abedev/npm"
     },
     {
       "name": "thx.core",
       "type": "git",
       "dir": "src",
-      "ref": "5a137fc",
+      "ref": "19ca894",
       "url": "git@github.com:fponticelli/thx.core"
     },
     {
       "name": "thx.promise",
       "type": "git",
       "dir": "src",
-      "ref": "9fe92f9",
+      "ref": "4eb6f93",
       "url": "git@github.com:fponticelli/thx.promise"
     },
     {
