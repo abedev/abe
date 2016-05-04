@@ -31,7 +31,7 @@ class ArgumentProcessor<TArgs : {}> {
       }
     }
 
-    return Promise.all(promises).mapEitherFuture(const(Ok), InvalidFilter);
+    return Promise.sequence(promises).mapEitherFuture(const(Ok), InvalidFilter);
   }
 
   public static function getValue(name : String, source : { params : {}, query : {}, body : {} }, sources : Array<Source>) : Option<Dynamic> {
