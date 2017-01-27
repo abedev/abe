@@ -370,7 +370,7 @@ class AutoRegisterRoute {
              var r = $exec;
              switch r {
                case Some(v): $some;
-               case None: next.error(new abe.core.error.NotFoundError());
+               case None: next.error(new abe.error.NotFoundError());
              }
            }';
         case { name : "thx.promise.Promise", params : [param] }:
