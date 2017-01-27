@@ -364,6 +364,15 @@ class AutoRegisterRoute {
                case Left(v): $l;
              }
            }';
+        case { name : "haxe.ds.Option", params : [param] }:
+          var some = wrapExecution(param, 'v', pos);
+          '{
+             var r = $exec;
+             switch r {
+               case Some(v): $some;
+               case None: next.error(new abe.core.error.NotFoundError());
+             }
+           }';
         case { name : "thx.promise.Promise", params : [param] }:
           // resolve left and right and apply the appropriated one
           var p = wrapExecution(param, 'v', pos);
