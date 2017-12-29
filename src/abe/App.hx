@@ -10,7 +10,7 @@ import express.Express;
 
 class App {
 #if !macro
-  public var router(default, null) : Router;
+  public var router(get, null) : Router;
   public var express(default, null) : Express;
 
   public function new(?options : Options) {
@@ -23,10 +23,6 @@ class App {
       express.set("case sensitive routing", true);
 
     express.set("x-powered-by", false);
-
-    var r  = new express.Router();
-    express.use("/", r);
-    router = new Router(r);
   }
 
   public function sub(path : String) {
@@ -64,6 +60,16 @@ class App {
   public function error(middleware : ErrorMiddleware) {
     express.use(middleware);
     return this;
+  }
+
+  function get_router():Router {
+    if (router == null) {
+        var r  = new express.Router();
+        express.use("/", r);
+        router = new Router(r);
+    }
+
+    return router;
   }
 
 #end
