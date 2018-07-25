@@ -41,13 +41,13 @@ class App {
     return Http.createServer(cast express);
 
   public function https(port : Int, options : TlsCreateServerOptions, ?host : String, ?backlog : Int, ?callback : Void -> Void) {
-    var server = httpsServer();
+    var server = httpsServer(options);
     server.listen(port, host, backlog, callback);
     return server;
   }
 
-  public function httpsServer() : js.node.https.Server
-    return Https.createServer(cast express);
+  public function httpsServer(options:TlsCreateServerOptions) : js.node.https.Server
+    return Https.createServer(options, cast express);
 
   public function use(?path : String, middleware : Middleware) {
     if(null == path)
