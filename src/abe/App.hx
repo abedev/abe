@@ -14,13 +14,13 @@ class App {
   public var express(default, null) : Express;
 
   public function new(?options : Options) {
-    options = null != options ? options : {};
+    options = null != options ? options : { strictRoute : true, caseSensitiveRouting : true };
     express = new Express();
 
     if(options.strictRoute)
-      express.set("strict route", true);
+      express.set("strict route", options.strictRoute);
     if(options.caseSensitiveRouting)
-      express.set("case sensitive routing", true);
+      express.set("case sensitive routing", options.caseSensitiveRouting);
 
     express.set("x-powered-by", false);
   }
